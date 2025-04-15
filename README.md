@@ -20,16 +20,4 @@
 - bcrypt
 - dotenv
 
-## 📦 Instalación
-
-```bash
-# Clonar el repositorio
-git clone https://github.com/tu-usuario/physiocare-api.git
-cd physiocare-api
-
-# Instalar dependencias
-npm install
-
-# Iniciar el servidor
-npm start
 
