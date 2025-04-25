@@ -20,32 +20,34 @@ router.get("/", protegerRuta(["admin", "physio"]), async (req, res) => {
     });
 });
 
-router.get(
-  "/patient/:id/appointsments/dates",
-  protegerRuta(["admin", "physio", "patient"]),
-  async (req, res) => {
-    let id = req.params.id;
-    let patient = await Patient.findById(id);
-    if (!patient) {
-      res.status(404).send({
-        ok: false,
-        error: "No existe paciente con id " + req.params.id,
-      });
-    }
-    Record.findOne({ patient: patient }).then((result) => {
-      //   res.status(200).send({ ok: true, resultado: result });
-      //   console.log(appointments);
-      // let app = result.appointments.map(r);
-      // console.log(app);
-      // res.status(200).send({ ok: true, resultado: app });
-      if (result.appointments) {
-        res.status(200).send({ ok: true, result: result.appointments });
-      } else {
-        res.status(404).send({ ok: false, result: "No hay citas registradas" });
-      }
-    });
-  }
-);
+// router.get(
+//   "/patient/:id/appointsments/dates",
+//   protegerRuta(["admin", "physio", "patient"]),
+//   async (req, res) => {
+//     let id = req.params.id;
+//     let patient = await Patient.findById(id);
+//     console.log(patient);
+//     if (!patient) {
+//       res.status(404).send({
+//         ok: false,
+//         error: "No existe paciente con id " + req.params.id,
+//       });
+//     }
+
+//     Record.findOne({ patient: patient }).then((result) => {
+//       //   res.status(200).send({ ok: true, resultado: result });
+//       //   console.log(appointments);
+//       // let app = result.appointments.map(r);
+//       // console.log(app);
+//       // res.status(200).send({ ok: true, resultado: app });
+//       if (result.appointments) {
+//         res.status(200).send({ ok: true, result: result.appointments });
+//       } else {
+//         res.status(404).send({ ok: false, result: "No hay citas registradas" });
+//       }
+//     });
+//   }
+// );
 
 router.get("/find", protegerRuta(["admin", "physio"]), async (req, res) => {
   let result;
@@ -69,7 +71,18 @@ router.get("/find", protegerRuta(["admin", "physio"]), async (req, res) => {
   }
 });
 
-//Buscar record por id del patient
+/**
+ * Las dos rutas que tengo aqui son para buscar appointments por id de patient o de physio
+ * En el caso de que no haya appointments, se devuelve un 404
+ * En el caso de que haya appointments, se devuelve un 200 y el resultado
+ * En el caso de que no haya patient o physio, se devuelve un 404
+ * En el caso de que haya un error, se devuelve un 500
+ */
+// MOVILES
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+//Buscar Appointment por id del patient
 router.get(
   "/appointments/patients/:id",
   protegerRuta(["admin", "physio"]),
@@ -96,7 +109,7 @@ router.get(
     });
   }
 );
-
+//Buscar Appointment por id del fisio
 router.get(
   "/appointments/physio/:id",
   protegerRuta(["admin", "physio"]),
@@ -126,7 +139,9 @@ router.get(
     });
   }
 );
-
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
 router.get(
   "/:id",
   protegerRuta(["admin", "physio", "patient"]),
