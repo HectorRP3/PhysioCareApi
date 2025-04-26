@@ -85,7 +85,7 @@ router.get("/find", protegerRuta(["admin", "physio"]), async (req, res) => {
 //Buscar Appointment por id del patient
 router.get(
   "/appointments/patients/:id",
-  protegerRuta(["admin", "physio"]),
+  protegerRuta(["admin", "physio", "patient"]),
   async (req, res) => {
     Patient.findById(req.params.id).then((patient) => {
       if (!patient) {
