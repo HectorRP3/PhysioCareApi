@@ -97,6 +97,7 @@ router.get(
       Record.find({ patient: patient._id })
         .then((result) => {
           let appointments = result.map((record) => record.appointments);
+          appointments = appointments.flatMap((record) => record);
           res.status(200).send({ ok: true, resultado: appointments });
         })
         .catch((err) => {
