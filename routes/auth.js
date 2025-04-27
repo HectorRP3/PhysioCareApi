@@ -11,7 +11,6 @@ router.post("/login", async (req, res) => {
 
   User.findOne({ login: login })
     .then(async (usuario) => {
-      //   const { login, password, rol } = usuario;
       const validPassword = await bycrypt.compare(
         req.body.password,
         usuario.password

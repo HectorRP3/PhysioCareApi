@@ -71,6 +71,41 @@ router.get("/find", protegerRuta(["admin", "physio"]), async (req, res) => {
   }
 });
 
+// MOVILES
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * Coger appointments por id de aPpointment
+ */
+//buscar appointment por id de appointment
+router.get(
+  "/appointments/:id",
+  protegerRuta(["admin", "physio"]),
+  async (req, res) => {
+    Record.find({})
+      .then((result) => {
+        let appointments = result.flatMap((record) => record.appointments);
+        let appointment = appointments.find(
+          (r) => r._id.toString() === req.params.id.toString()
+        );
+        if (!appointment) {
+          return res.status(404).send({
+            ok: false,
+            error: "No existe appointment con id " + req.params.id,
+          });
+        }
+        res.status(200).send({ ok: true, resultado: appointment });
+      })
+      .catch((err) => {
+        if (res.length === 0) {
+          res.status(404).send({ ok: false, error: "Record not found" });
+        } else {
+          res.status(500).send({ ok: false, error: "Internal server error" });
+        }
+      });
+  }
+);
 /**
  * Las dos rutas que tengo aqui son para buscar appointments por id de patient o de physio
  * En el caso de que no haya appointments, se devuelve un 404
@@ -78,10 +113,6 @@ router.get("/find", protegerRuta(["admin", "physio"]), async (req, res) => {
  * En el caso de que no haya patient o physio, se devuelve un 404
  * En el caso de que haya un error, se devuelve un 500
  */
-// MOVILES
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
 //Buscar Appointment por id del patient
 router.get(
   "/appointments/patients/:id",
@@ -98,6 +129,7 @@ router.get(
         .then((result) => {
           let appointments = result.map((record) => record.appointments);
           appointments = appointments.flatMap((record) => record);
+
           res.status(200).send({ ok: true, resultado: appointments });
         })
         .catch((err) => {
@@ -119,10 +151,11 @@ router.get(
       if (!physio) {
         return res.status(404).send({
           ok: false,
-          error: "No existe paciente con id " + req.params.id,
+          error: "No existe physio con id " + req.params.id,
         });
       }
-      Record.find()
+
+      Record.find({})
         .then((result) => {
           let appointments = result.flatMap((record) => record.appointments);
           let physios = appointments.filter(
@@ -140,6 +173,7 @@ router.get(
     });
   }
 );
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
