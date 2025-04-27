@@ -278,4 +278,54 @@ router.delete("/:id", protegerRuta(["admin", "physio"]), async (req, res) => {
     });
 });
 
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+//borrar appointment por id de appointment
+router.delete(
+  "/appointments/:id",
+  protegerRuta(["admin", "physio"]),
+  async (req, res) => {
+    Record.find({})
+      .then((result) => {
+        let appointments = result.flatMap((record) => record.appointments);
+        let appointment = appointments.find(
+          (r) => r._id.toString() === req.params.id.toString()
+        );
+        if (!appointment) {
+          return res.status(404).send({
+            ok: false,
+            error: "No existe appointment con id " + req.params.id,
+          });
+        }
+        Record.updateMany(
+          {},
+          { $pull: { appointments: { _id: appointment._id } } },
+          { multi: true }
+        )
+          .then((result) => {
+            res.status(200).send({ ok: true, resultado: result });
+          })
+          .catch((err) => {
+            if (res.length === 0) {
+              res.status(404).send({ ok: false, error: "Record not found" });
+            } else {
+              res.status(500).send({
+                ok: false,
+                error: "Internal server error",
+              });
+            }
+          });
+      })
+      .catch((err) => {
+        if (res.length === 0) {
+          res.status(404).send({ ok: false, error: "Record not found" });
+        } else {
+          res.status(500).send({ ok: false, error: "Internal server error" });
+        }
+      });
+  }
+);
+
 module.exports = router;
