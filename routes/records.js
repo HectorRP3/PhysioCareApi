@@ -81,7 +81,7 @@ router.get("/find", protegerRuta(["admin", "physio"]), async (req, res) => {
 //buscar appointment por id de appointment
 router.get(
   "/appointments/:id",
-  protegerRuta(["admin", "physio"]),
+  protegerRuta(["admin", "physio", "patient"]),
   async (req, res) => {
     Record.find({})
       .then((result) => {
