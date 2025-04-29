@@ -224,6 +224,28 @@ router.get(
       });
   }
 );
+
+//coger appointements por id del record
+router.get(
+  "/patients/appointments/:id",
+  protegerRuta(["admin", "physio"]),
+  async (req, res) => {
+    Record.findById(req.params.id)
+      .populate("appointments")
+      .then((result) => {
+        console.log(result.appointments);
+        res.status(200).send({ ok: true, resultado: result.appointments });
+      })
+      .catch((err) => {
+        if (res.length === 0) {
+          res.status(404).send({ ok: false, error: "Record not found" });
+        } else {
+          res.status(500).send({ ok: false, error: "Internal server error" });
+        }
+      });
+  }
+);
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
