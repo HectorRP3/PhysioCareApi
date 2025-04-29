@@ -91,44 +91,38 @@ router.get("/moviles", protegerRuta(["admin", "physio"]), async (req, res) => {
     });
 });
 //Ruta para buscar por nombre o por insuranceNumber
-router.get(
-  "/busqueda/:busqueda",
-  protegerRuta(["admin", "physio"]),
-  async (req, res) => {
-    const busqueda = req.params.busqueda;
-    try {
-      Record.find()
-        .populate("patient")
-        .then((result) => {
-          if (result.length === 0) {
-            return res
-              .status(404)
-              .send({ ok: false, error: "No se encontraron resultados" });
-          }
+router.get("/busqueda", protegerRuta(["admin", "physio"]), async (req, res) => {
+  const { busqueda } = req.query;
+  try {
+    Record.find()
+      .populate("patient")
+      .then((result) => {
+        if (result.length === 0) {
+          return res
+            .status(404)
+            .send({ ok: false, error: "No se encontraron resultados" });
+        }
 
-          let patients = result.filter((record) => {
-            const patient = record.patient;
-            return (
-              patient.name.toLowerCase().includes(busqueda.toLowerCase()) ||
-              patient.insuranceNumber
-                .toLowerCase()
-                .includes(busqueda.toLowerCase())
-            );
-          });
-          // const recordResponse = patients.map((record) => {
-          //   return {
-          //     _id: record._id,
-          //     patient: record.patient.name,
-          //     medicalRecord: record.medicalRecord,ks
-          //   };
-          // });
-          res.status(200).send({ ok: true, resultado: patients });
+        let patients = result.filter((record) => {
+          const patient = record.patient;
+          return (
+            patient.name.toLowerCase().includes(busqueda) ||
+            patient.insuranceNumber.toLowerCase().includes(busqueda)
+          );
         });
-    } catch (err) {
-      res.status(500).send({ ok: false, error: "Internal server error" });
-    }
+        // const recordResponse = patients.map((record) => {
+        //   return {
+        //     _id: record._id,
+        //     patient: record.patient.name,
+        //     medicalRecord: record.medicalRecord,ks
+        //   };
+        // });
+        res.status(200).send({ ok: true, resultado: patients });
+      });
+  } catch (err) {
+    res.status(500).send({ ok: false, error: "Internal server error" });
   }
-);
+});
 
 /**
  * Coger appointments por id de aPpointment
