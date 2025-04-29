@@ -90,39 +90,6 @@ router.get("/moviles", protegerRuta(["admin", "physio"]), async (req, res) => {
       }
     });
 });
-//Ruta para buscar por nombre o por insuranceNumber
-router.get("/busqueda", protegerRuta(["admin", "physio"]), async (req, res) => {
-  const { busqueda } = req.query;
-  try {
-    Record.find()
-      .populate("patient")
-      .then((result) => {
-        if (result.length === 0) {
-          return res
-            .status(404)
-            .send({ ok: false, error: "No se encontraron resultados" });
-        }
-
-        let patients = result.filter((record) => {
-          const patient = record.patient;
-          return (
-            patient.name.toLowerCase().includes(busqueda) ||
-            patient.insuranceNumber.toLowerCase().includes(busqueda)
-          );
-        });
-        // const recordResponse = patients.map((record) => {
-        //   return {
-        //     _id: record._id,
-        //     patient: record.patient.name,
-        //     medicalRecord: record.medicalRecord,ks
-        //   };
-        // });
-        res.status(200).send({ ok: true, resultado: patients });
-      });
-  } catch (err) {
-    res.status(500).send({ ok: false, error: "Internal server error" });
-  }
-});
 
 /**
  * Coger appointments por id de aPpointment
@@ -222,7 +189,41 @@ router.get(
     });
   }
 );
+//Coger record por id del record with populate del patient
+router.get(
+  "/patient/:id",
+  protegerRuta(["admin", "physio", "patient"]),
+  async (req, res) => {
+    let { id } = req.params.id;
+    let user = req.user.login;
+    let userRole = req.user.rol;
 
+    if (userRole !== "admin" && userRole !== "physio") {
+      let userID = await Patient.findOne({ name: user }).then((result) => {
+        u = result._id.toString();
+        return u;
+      });
+      if (userRole === "patient" && req.params.id !== userID) {
+        return res.status(403).send({
+          ok: false,
+          error: "Only the patient can see his/her own data",
+        });
+      }
+    }
+    Record.findById(req.params.id)
+      .populate("patient")
+      .then((result) => {
+        res.status(200).send({ ok: true, resultado: result });
+      })
+      .catch((err) => {
+        if (res.length === 0) {
+          res.status(404).send({ ok: false, error: "Record not found" });
+        } else {
+          res.status(500).send({ ok: false, error: "Internal server error" });
+        }
+      });
+  }
+);
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
