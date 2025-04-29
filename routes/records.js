@@ -75,6 +75,57 @@ router.get("/find", protegerRuta(["admin", "physio"]), async (req, res) => {
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
+// Esta ruta es para ver todos los record pero con el populate del patient
+router.get("/moviles", protegerRuta(["admin", "physio"]), async (req, res) => {
+  Record.find()
+    .populate("patient")
+    .then((result) => {
+      res.status(200).send({ ok: true, resultado: result });
+    })
+    .catch((err) => {
+      if (res.length === 0) {
+        res.status(404).send({ ok: false, error: "Record not found" });
+      } else {
+        res.status(500).send({ ok: false, error: "Internal server error" });
+      }
+    });
+});
+//Ruta para buscar por nombre o por insuranceNumber
+router.get("/busqueda/:busqueda", async (req, res) => {
+  const busqueda = req.params.busqueda;
+  try {
+    Record.find()
+      .populate("patient")
+      .then((result) => {
+        if (result.length === 0) {
+          return res
+            .status(404)
+            .send({ ok: false, error: "No se encontraron resultados" });
+        }
+
+        let patients = result.filter((record) => {
+          const patient = record.patient;
+          return (
+            patient.name.toLowerCase().includes(busqueda.toLowerCase()) ||
+            patient.insuranceNumber
+              .toLowerCase()
+              .includes(busqueda.toLowerCase())
+          );
+        });
+        // const recordResponse = patients.map((record) => {
+        //   return {
+        //     _id: record._id,
+        //     patient: record.patient.name,
+        //     medicalRecord: record.medicalRecord,ks
+        //   };
+        // });
+        res.status(200).send({ ok: true, resultado: patients });
+      });
+  } catch (err) {
+    res.status(500).send({ ok: false, error: "Internal server error" });
+  }
+});
+
 /**
  * Coger appointments por id de aPpointment
  */
