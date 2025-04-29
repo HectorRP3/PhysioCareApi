@@ -70,7 +70,22 @@ router.get("/find", protegerRuta(["admin", "physio"]), async (req, res) => {
     }
   }
 });
-
+router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
+  const { patient, medicalRecord, appointments } = req.body;
+  const newRecord = new Record({
+    patient,
+    medicalRecord,
+    appointments,
+  });
+  newRecord
+    .save()
+    .then((result) => {
+      res.status(200).send({ ok: true, resultado: result });
+    })
+    .catch((err) => {
+      res.status(500).send({ ok: false, error: "Internal server error" });
+    });
+});
 // MOVILES
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -246,6 +261,30 @@ router.get(
   }
 );
 
+//añadir appointment a un record
+router.post(
+  "/appointments/:id",
+  protegerRuta(["admin", "physio"]),
+  async (req, res) => {
+    const { date, physio, diagnosis, treatment, observations } = req.body;
+    const newAppointment = {
+      date,
+      physio,
+      diagnosis,
+      treatment,
+      observations,
+    };
+    Record.findByIdAndUpdate(req.params.id, {
+      $push: { appointments: newAppointment },
+    })
+      .then((result) => {
+        res.status(200).send({ ok: true, resultado: result });
+      })
+      .catch((err) => {
+        res.status(500).send({ ok: false, error: "Internal server error" });
+      });
+  }
+);
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -302,23 +341,6 @@ router.get(
       });
   }
 );
-
-router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
-  const { patient, medicalRecord, appointments } = req.body;
-  const newRecord = new Record({
-    patient,
-    medicalRecord,
-    appointments,
-  });
-  newRecord
-    .save()
-    .then((result) => {
-      res.status(200).send({ ok: true, resultado: result });
-    })
-    .catch((err) => {
-      res.status(500).send({ ok: false, error: "Internal server error" });
-    });
-});
 
 router.put("/:id", protegerRuta(["admin", "physio"]), async (req, res) => {
   const { date, patient, physio, treatment } = req.body;
