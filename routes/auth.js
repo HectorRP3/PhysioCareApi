@@ -54,4 +54,19 @@ router.post("/login", async (req, res) => {
     });
 });
 
+//routa validacion token
+router.get("/validarToken", async (req, res) => {
+  const token = req.headers["authorization"];
+  console.log(token);
+  if (!token) {
+    return res.status(401).send({ ok: false, resultado: "Token no valido" });
+  }
+  const tokenSinBearer = token.split(" ")[1];
+  const decoded = Auth.validarToken(tokenSinBearer);
+  if (!decoded) {
+    return res.status(401).send({ ok: false, resultado: "Token no valido" });
+  }
+  res.status(200).send({ ok: true, resultado: decoded });
+});
+
 module.exports = router;
