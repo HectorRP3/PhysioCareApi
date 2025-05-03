@@ -128,7 +128,14 @@ router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
     address,
     insuranceNumber,
     email,
+    // userID: userId // Aquí se asigna el id del usuario al paciente pero se coge arriba donde los campos,
   });
+  /*
+  Aqui se tiene que crear el usuario y asignarle el rol de paciente
+  y a patient despues de crear el paciente se le asigna el id del usuario
+  IMPORTANTE que el id del usuario se le asigna al paciente y no al reves
+  y EN LOS CAMPOS DE ARRIBA SE TIENE QUE AÑADIR el password y el login
+  */
   newPatient
     .save()
     .then((result) => {
