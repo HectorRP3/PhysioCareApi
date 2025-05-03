@@ -8,7 +8,7 @@ const secreto = process.env.JWT_SECRET_KEY;
 
 //Función genera el token JWT basado en el nombre del usuario
 let generarToken = (login, rol) =>
-  jwt.sign({ login: login, rol: rol }, secreto, { expiresIn: "1m" });
+  jwt.sign({ login: login, rol: rol }, secreto, { expiresIn: "2 hours" });
 
 //Función para validar el token JWT recibido
 //Devuelve los datos decodificados del token si es válido
