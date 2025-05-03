@@ -15,7 +15,7 @@ import cors from "cors";
 let app = express();
 app.use(
   cors({
-    origin: "http://localhost:8100", // o ['http://localhost:8100', 'https://tu‑frontend.com']
+    origin: "http://localhost:4200", // o ['http://localhost:8100', 'https://tu‑frontend.com']
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true, // solo si envías cookies o cabecera Authorization
