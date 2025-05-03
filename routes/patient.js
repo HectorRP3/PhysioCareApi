@@ -7,7 +7,6 @@ dotenv.config();
 const Patient = require(__dirname + "/../models/patient");
 const User = require(__dirname + "/../models/users");
 const Auth = require(__dirname + "/../auth/auth");
-
 // ------------------------------------------------------------
 // patientRoutes.js
 // ------------------------------------------------------------
@@ -24,22 +23,14 @@ const Auth = require(__dirname + "/../auth/auth");
 // ▸ PUT    /:id            — Modifica un paciente existente.
 // ▸ DELETE /:id            — Elimina un paciente.
 // ------------------------------------------------------------
-// Middleware de autorización por roles
-//   protegerRuta(["admin", "physio", ...])
-const protegerRuta = require("../middlewares/protegerRuta");
-
-// ------------------------------------------------------------
-// GET / — Devuelve la lista completa de pacientes
-// Roles permitidos: admin, physio
-// ------------------------------------------------------------
 router.get("/", protegerRuta(["admin", "physio"]), async (req, res) => {
   Patient.find()
     .then((result) => {
-      console.log("entrando"); // ◄ DEBUG: confirmar que la ruta se ejecuta
+      console.log("entrando");
+
       res.status(200).send({ ok: true, resultado: result });
     })
     .catch((err) => {
-      // ⚠️ OJO: aquí se usa res.length, que es undefined → siempre irá al else
       if (res.length === 0) {
         res.status(404).send({ ok: false, error: "Patient not found" });
       } else {
@@ -48,28 +39,21 @@ router.get("/", protegerRuta(["admin", "physio"]), async (req, res) => {
     });
 });
 
-// ------------------------------------------------------------
-// GET /find — Busca pacientes por apellido (querystring)
-// Ejemplo: GET /find?surname=Pérez
-// Roles permitidos: admin, physio
-// ------------------------------------------------------------
 router.get("/find", protegerRuta(["admin", "physio"]), async (req, res) => {
   let result;
-  const { surname } = req.query; // apellido a buscar (opcional)
-
+  const { surname } = req.query;
   try {
     if (surname) {
-      // Búsqueda con expresión regular para soportar coincidencias parciales / mayúsc‑minúsculas
       result = await Patient.find({
-        surname: { $regex: surname, $options: "i" },
+        surname: {
+          $regex: surname,
+        },
       });
     } else {
-      // Si no se proporciona apellido, devuelve todos los pacientes
       result = await Patient.find();
     }
     res.status(200).send({ ok: true, resultado: result });
   } catch (err) {
-    // Misma advertencia que antes sobre res.length
     if (res.length === 0) {
       res.status(404).send({ ok: false, error: "Patient not found" });
     } else {
@@ -77,70 +61,55 @@ router.get("/find", protegerRuta(["admin", "physio"]), async (req, res) => {
     }
   }
 });
+//Moviles
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * Esta ruta es para coger el id del paciente a partir del id de usuario
+ */
+// This route is used to get the patient ID from the user Id Moviles ruta
+router.get("/user/:id", async (req, res) => {
+  let { id } = req.params.id;
 
-// ------------------------------------------------------------
-// GET /user/:id — Devuelve el _id del paciente a partir del id de usuario
-// ⚠️ Pensado para la app móvil: se ignora la protección por roles
-// ------------------------------------------------------------
-router.get(
-  "/user/:id",
-  protegerRuta(["admin", "physio", "patient"]),
-  async (req, res) => {
-    const { id } = req.params; // id de usuario (no confundir con _id del paciente)
+  let userID = await Patient.findOne({ userID: id }).then((result) => {
+    res.status(200).send({ ok: true, resultado: result._id });
+  });
+  return res.status(403).send({
+    ok: false,
+    error: "Only the patient can see his/her own data",
+  });
+});
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
 
-    // Buscamos el paciente cuyo campo userID coincide con el id recibido
-    const patient = await Patient.findOne({ userID: id });
-
-    if (patient) {
-      return res.status(200).send({ ok: true, resultado: patient._id });
-    }
-
-    // Si llegamos aquí, el paciente no existe o no coincide con el usuario actual
-    return res.status(403).send({
-      ok: false,
-      error: "Only the patient can see his/her own data",
-    });
-  }
-);
-
-// ------------------------------------------------------------
-// GET /:id — Devuelve la ficha de un paciente concreto
-// Roles permitidos: admin, physio, patient
-// El paciente solo puede verse a sí mismo (autocontrol)
-// ------------------------------------------------------------
 router.get(
   "/:id",
   protegerRuta(["admin", "physio", "patient"]),
   async (req, res) => {
-    const { id } = req.params; // _id del paciente solicitado
-    const userLogin = req.user.login; // login del usuario autenticado
-    const userRole = req.user.rol; // rol del usuario autenticado
+    let { id } = req.params.id;
+    let user = req.user.login;
+    let userRole = req.user.rol;
 
-    // ---------- Regla de negocio ----------
-    // • admin y physio pueden acceder a cualquier paciente
-    // • patient solo puede acceder a su propia ficha
-    // --------------------------------------
-    if (userRole === "patient") {
-      // Obtenemos el _id del paciente asociado al usuario login
-      const patientSelf = await Patient.findOne({ name: userLogin });
-      const selfId = patientSelf?._id?.toString();
-
-      if (id !== selfId) {
+    if (userRole !== "admin" && userRole !== "physio") {
+      let userID = await Patient.findOne({ name: user }).then((result) => {
+        u = result._id.toString();
+        return u;
+      });
+      if (userRole === "patient" && req.params.id !== userID) {
         return res.status(403).send({
           ok: false,
           error: "Only the patient can see his/her own data",
         });
       }
     }
-
-    // Llegados aquí, el acceso está permitido
-    Patient.findById(id)
+    Patient.findById(req.params.id)
       .then((result) => {
         res.status(200).send({ ok: true, resultado: result });
       })
       .catch((err) => {
-        if (err.kind === "ObjectId") {
-          // Id mal formado o no existe
+        if (res.length === 0) {
           res.status(404).send({ ok: false, error: "Patient not found" });
         } else {
           res.status(500).send({ ok: false, error: "Internal server error" });
@@ -149,14 +118,9 @@ router.get(
   }
 );
 
-// ------------------------------------------------------------
-// POST / — Crea un nuevo paciente
-// Roles permitidos: admin, physio
-// ------------------------------------------------------------
 router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
   const { name, surname, birthDate, address, insuranceNumber, email } =
     req.body;
-
   const newPatient = new Patient({
     name,
     surname,
@@ -165,69 +129,87 @@ router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
     insuranceNumber,
     email,
   });
-
   newPatient
     .save()
     .then((result) => {
       res.status(200).send({ ok: true, resultado: result });
     })
     .catch((err) => {
-      // Validación de errores comunes
+      // res.status(500).send({ ok: false, error: "Internal server error" });
       if (err.code === 11000) {
-        // Clave «insuranceNumber» duplicada (índice único)
-        res
-          .status(409)
-          .send({ ok: false, error: "El número de seguro ya existe" });
+        res.status(409).send({
+          ok: false,
+          error: "El número de seguro ya existe",
+        });
       } else if (err.errors) {
-        // Violación de validaciones de esquema (ej. email inválido)
-        const firstError = err.errors[Object.keys(err.errors)[0]].message;
-        res.status(400).send({ ok: false, error: firstError });
+        res.status(400).send({
+          ok: false,
+          error: err.errors[Object.keys(err.errors)[0]].message,
+        });
       } else {
         res.status(500).send({ ok: false, error: "Internal server error" });
       }
+      // if (err.code === 11000) {
+      //   res.status(409).send({
+      //     ok: false,
+      //     error: "El número de seguro ya existe",
+      //   });
+      // } else {
+      //   if (err.errors.name) {
+      //     res.status(400).send({
+      //       ok: false,
+      //       error: err.errors.name.message,
+      //     });
+      //   }
+      // }
     });
 });
 
-// ------------------------------------------------------------
-// PUT /:id — Actualiza los datos de un paciente
-// Roles permitidos: admin, physio
-// ------------------------------------------------------------
 router.put("/:id", protegerRuta(["admin", "physio"]), async (req, res) => {
   const { name, surname, birthDate, address, insuranceNumber } = req.body;
-
   Patient.findByIdAndUpdate(
     req.params.id,
-    { name, surname, birthDate, address, insuranceNumber },
-    { new: true } // Devuelve el documento actualizado
+    {
+      name,
+      surname,
+      birthDate,
+      address,
+      insuranceNumber,
+    },
+    { new: true }
   )
     .then((result) => {
       res.status(200).send({ ok: true, resultado: result });
     })
     .catch((err) => {
+      // if (res.length === 0) {
+      //   res.status(404).send({ ok: false, error: "Patient not found" });
+      // } else {
+      //   res.status(500).send({ ok: false, error: "Internal server error" });
+      // }
       if (err.code === 11000) {
-        res
-          .status(409)
-          .send({ ok: false, error: "El número de seguro ya existe" });
+        res.status(409).send({
+          ok: false,
+          error: "El número de seguro ya existe",
+        });
       } else if (err.errors) {
-        const firstError = err.errors[Object.keys(err.errors)[0]].message;
-        res.status(400).send({ ok: false, error: firstError });
+        res.status(400).send({
+          ok: false,
+          error: err.errors[Object.keys(err.errors)[0]].message,
+        });
       } else {
         res.status(500).send({ ok: false, error: "Internal server error" });
       }
     });
 });
 
-// ------------------------------------------------------------
-// DELETE /:id — Elimina un paciente existente
-// Roles permitidos: admin, physio
-// ------------------------------------------------------------
 router.delete("/:id", protegerRuta(["admin", "physio"]), async (req, res) => {
   Patient.findByIdAndDelete(req.params.id)
     .then((result) => {
       res.status(200).send({ ok: true, resultado: result });
     })
     .catch((err) => {
-      if (err.kind === "ObjectId") {
+      if (res.length === 0) {
         res.status(404).send({ ok: false, error: "Patient not found" });
       } else {
         res.status(500).send({ ok: false, error: "Internal server error" });
@@ -235,7 +217,4 @@ router.delete("/:id", protegerRuta(["admin", "physio"]), async (req, res) => {
     });
 });
 
-// ------------------------------------------------------------
-// Exportamos el router para montarlo en la aplicación principal
-// ------------------------------------------------------------
 module.exports = router;
