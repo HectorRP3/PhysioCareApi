@@ -10,7 +10,7 @@ const Physio2 = require("./routes/physios");
 const Record2 = require("./routes/records");
 const Auth = require("./routes/auth");
 const bycrypt = require("bcryptjs");
-import cors from "cors";
+const cors = require("cors");
 
 let app = express();
 app.use(
