@@ -15,10 +15,9 @@ import cors from "cors";
 let app = express();
 app.use(
   cors({
-    origin: ["http://localhost:4200", "http://localhost:8100"],
+    origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
   })
 );
 app.use(express.json());
