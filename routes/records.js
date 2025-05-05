@@ -17,12 +17,13 @@ const Physio = require(__dirname + "/../models/physio");
 // ▸ POST   /                               — Crea un nuevo historial.
 //
 // ▸ GET    /moviles                       — Lista con populate de paciente (app móvil).
-//
+// ▸ Get    /appointmentAdmin
 // ▸ GET    /appointments/:id              — Appointment por id de cita.
 // ▸ GET    /appointments/patients/:id     — Appointments por id de paciente.
 // ▸ GET    /appointments/physio/:id       — Appointments por id de fisio.
 // ▸ POST   /appointments/:id              — Añade appointment a un record.
 // ▸ DELETE /appointments/:id              — Borra appointment por id de cita.
+
 //
 // ▸ GET    /patient/:id                   — Record con populate paciente (autocontrol).
 // ▸ GET    /patients/appointments/:id     — Appointments de un record (populate citas).
@@ -122,6 +123,22 @@ router.get("/moviles", protegerRuta(["admin", "physio"]), async (req, res) => {
     .populate("patient")
     .then((result) => {
       res.status(200).send({ ok: true, resultado: result });
+    })
+    .catch((err) => {
+      if (res.length === 0) {
+        res.status(404).send({ ok: false, error: "Record not found" });
+      } else {
+        res.status(500).send({ ok: false, error: "Internal server error" });
+      }
+    });
+});
+
+router.get("/appointmentAdmin", protegerRuta(["admin"]), async (req, res) => {
+  Record.find()
+    .populate("appointments")
+    .then((result) => {
+      let appointments = result.flatMap((record) => record.appointments);
+      res.status(200).send({ ok: true, resultado: appointments });
     })
     .catch((err) => {
       if (res.length === 0) {
@@ -292,13 +309,15 @@ router.post(
   "/appointments/:id",
   protegerRuta(["admin", "physio"]),
   async (req, res) => {
-    const { date, physio, diagnosis, treatment, observations } = req.body;
+    const { date, physio, diagnosis, treatment, observations, status } =
+      req.body;
     const newAppointment = {
       date,
       physio,
       diagnosis,
       treatment,
       observations,
+      status,
     };
     Record.findByIdAndUpdate(req.params.id, {
       $push: { appointments: newAppointment },

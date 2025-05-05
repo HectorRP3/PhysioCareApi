@@ -11,19 +11,25 @@ let appointmentsSchema = new mongoose.Schema({
   },
   diagnosis: {
     type: String,
-    require: true,
     trim: true,
     maxlength: 500,
     minlength: 10,
   },
   treatment: {
     type: String,
-    require: true,
     trim: true,
   },
   observations: {
     type: String,
     maxlength: 500,
+  },
+  status: {
+    type: String,
+    enum: {
+      values: ["pending", "completed", "cancelled"],
+      message: "{VALUE} no es un estado válido",
+    },
+    default: "pending",
   },
 });
 let recordSchema = new mongoose.Schema({
