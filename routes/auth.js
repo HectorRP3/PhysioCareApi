@@ -43,7 +43,7 @@ router.post("/login", async (req, res) => {
       console.log("idActual", idActual);
       res.status(200).send({
         ok: true,
-        token: Auth.generarToken(usuario.login, usuario.rol),
+        token: Auth.generarToken(usuario.login, usuario.rol, usuario._id),
         rol: usuario.rol,
         id: idActual,
       });
