@@ -147,7 +147,7 @@ router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
     specialty,
     licenseNumber,
     email,
-    imageUrl,
+    avatar: imageUrl,
   });
   console.log("newPhysio", newPhysio);
   newPhysio
