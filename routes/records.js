@@ -327,7 +327,9 @@ router.post(
         res.status(200).send({ ok: true, resultado: result });
       })
       .catch((err) => {
-        res.status(500).send({ ok: false, error: "Internal server error" });
+        res
+          .status(500)
+          .send({ ok: false, error: "Internal server error", err: err });
       });
   }
 );
