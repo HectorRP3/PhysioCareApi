@@ -139,8 +139,10 @@ router.get(
 router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
   const { name, surname, specialty, licenseNumber, email, avatar } = req.body;
 
-  const imageUrl = await saveImage("physios", avatar);
-
+  let imageUrl = "";
+  if (avatar) {
+    imageUrl = await saveImage("physios", avatar);
+  }
   const newPhysio = new Physio({
     name,
     surname,
