@@ -21,7 +21,8 @@ const Physio = require(__dirname + "/../models/physio");
 // ▸ GET    /appointments/:id              — Appointment por id de cita.
 // ▸ GET    /appointments/patients/:id     — Appointments por id de paciente.
 // ▸ GET    /appointments/physio/:id       — Appointments por id de fisio.
-// ▸ POST   /appointments/:id              — Añade appointment a un record.
+// ▸ POST   /appointments/:id              — Añade appointment a un record
+// ▸ PUT   /appointments/:id              - Editar appointment a un record..
 // ▸ DELETE /appointments/:id              — Borra appointment por id de cita.
 
 //
@@ -322,6 +323,33 @@ router.post(
     Record.findByIdAndUpdate(req.params.id, {
       $push: { appointments: newAppointment },
     })
+      .then((result) => {
+        res.status(200).send({ ok: true, resultado: result });
+      })
+      .catch((err) => {
+        res.status(500).send({ ok: false, error: "Internal server error" });
+      });
+  }
+);
+//editar appointment a por id de appointment
+router.put(
+  "/appointments/:id",
+  protegerRuta(["admin", "physio"]),
+  async (req, res) => {
+    const { date, physio, diagnosis, treatment, observations, status } =
+      req.body;
+    const newAppointment = {
+      date,
+      physio,
+      diagnosis,
+      treatment,
+      observations,
+      status,
+    };
+    Record.updateMany(
+      { "appointments._id": req.params.id },
+      { $set: { "appointments.$": newAppointment } }
+    )
       .then((result) => {
         res.status(200).send({ ok: true, resultado: result });
       })
