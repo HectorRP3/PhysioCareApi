@@ -1,3 +1,7 @@
+const path = require("path");
+const fs = require("fs");
+const download = require("image-downloader");
+
 function saveImage(dir, photo) {
   const data = photo.split(",")[1] || photo;
   const file = `${Date.now()}.jpg`;
