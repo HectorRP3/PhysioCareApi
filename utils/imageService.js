@@ -1,4 +1,4 @@
-export function saveImage(dir, photo) {
+function saveImage(dir, photo) {
   const data = photo.split(",")[1] || photo;
   const file = `${Date.now()}.jpg`;
   return new Promise((resolve, reject) => {
@@ -11,7 +11,7 @@ export function saveImage(dir, photo) {
     });
   });
 }
-export async function downloadImage(dir, url) {
+async function downloadImage(dir, url) {
   const file = `${Date.now()}.jpg`;
   const filePath = path.join(path.resolve("./"), "img", dir, file);
   await download.image({
@@ -20,8 +20,7 @@ export async function downloadImage(dir, url) {
   });
   return `img/${dir}/${file}`;
 }
-
-export function removeImage(path) {
+function removeImage(path) {
   return new Promise((resolve, reject) => {
     fs.unlink(path, (err) => {
       if (err) {
