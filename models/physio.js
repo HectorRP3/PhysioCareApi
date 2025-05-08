@@ -46,6 +46,14 @@ let physioSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "users",
   },
+  avatar: {
+    type: String,
+    maxlength: [
+      100,
+      "La URL del avatar no puede tener menos de 100 caracteres",
+    ],
+    default: "",
+  },
 });
 
 let Physio = mongoose.model("Physio", physioSchema);

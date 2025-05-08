@@ -2,6 +2,7 @@ const express = require("express");
 const { protegerRuta, validarToken } = require("../auth/auth");
 let router = express.Router();
 
+import { saveImage, downloadImage, removeImage } from "../utils/imageService";
 const Physio = require(__dirname + "/../models/physio");
 // ------------------------------------------------------------
 // physioRoutes.js
@@ -131,14 +132,18 @@ router.get(
   }
 );
 
-router.post("/", protegerRuta(["admin"]), async (req, res) => {
-  const { name, surname, specialty, licenseNumber, email } = req.body;
+router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
+  const { name, surname, specialty, licenseNumber, email, avatar } = req.body;
+  if (!avatar) {
+    const imageUrl = await saveImage("physios", avatar);
+  }
   const newPhysio = new Physio({
     name,
     surname,
     specialty,
     licenseNumber,
     email,
+    imageUrl,
   });
   console.log("newPhysio", newPhysio);
   newPhysio
