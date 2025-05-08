@@ -122,7 +122,7 @@ router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
 
 //rutas pasadas
 router.get(
-  "appointmentsPast",
+  "/appointmentsPast",
   protegerRuta(["admin", "physio", "patient"]),
   async (req, res) => {
     Record.find()
@@ -145,7 +145,7 @@ router.get(
 );
 //rutasfuturas
 router.get(
-  "appointmentsFuture",
+  "/appointmentsFuture",
   protegerRuta(["admin", "physio", "patient"]),
   async (req, res) => {
     Record.find()
