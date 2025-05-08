@@ -12,6 +12,7 @@ const Physio = require(__dirname + "/../models/physio");
 //
 // ▸ GET    /               — Lista de fisioterapeutas.
 // ▸ GET    /find           — Búsqueda filtrada por especialidad.
+// ▸ GET    /me             — Obtiene el fisio logueado (para la app móvil).
 // ▸ GET    /user/:id       — Obtiene el _id del fisio a partir
 //                             del id de usuario (para la app móvil).
 // ▸ GET    /:id            — Obtiene un fisio por su _id.
@@ -64,6 +65,29 @@ router.get(
   }
 );
 
+router.get("/me", protegerRuta(["physio"]), async (req, res) => {
+  // Obtener el token del header de la petición
+  const token = req.headers["authorization"].split(" ")[1];
+  // Decodificar el token para obtener el id del usuario
+  const decodedToken = validarToken(token);
+  // Obtener el id del usuario
+  const userId = decodedToken.id;
+  // Buscar el fisio por el id del usuario
+  Physio.findOne({ userID: userId })
+    .then((result) => {
+      if (!result) {
+        res.status(404).send({
+          ok: false,
+          error: "No existe fisio con id " + req.params.id,
+        });
+      } else {
+        res.status(200).send({ ok: true, resultado: result });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({ ok: false, error: "Internal server error" });
+    });
+});
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
