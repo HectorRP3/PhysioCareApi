@@ -2,7 +2,11 @@ const express = require("express");
 const { protegerRuta, validarToken } = require("../auth/auth");
 let router = express.Router();
 
-import { saveImage, downloadImage, removeImage } from "../utils/imageService";
+const {
+  saveImage,
+  downloadImage,
+  removeImage,
+} = require("../utils/imageService");
 const Physio = require(__dirname + "/../models/physio");
 // ------------------------------------------------------------
 // physioRoutes.js
