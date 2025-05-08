@@ -17,7 +17,12 @@ app.use(
   cors({
     origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: [
+      "Content-Type",
+      "X-XSRF-TOKEN",
+      "Authorization",
+      "x-xsrf-token",
+    ],
   })
 );
 app.use(express.json());
