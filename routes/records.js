@@ -18,6 +18,9 @@ const Physio = require(__dirname + "/../models/physio");
 //
 // ▸ GET    /moviles                       — Lista con populate de paciente (app móvil).
 // ▸ Get    /appointmentAdmin
+//  ▸ Get /appointmentsPast
+//  ▸ Get /appointmentsFuture
+// ▸ Get /appointmentComplete
 // ▸ GET    /appointments/:id              — Appointment por id de cita.
 // ▸ GET    /appointments/patients/:id     — Appointments por id de paciente.
 // ▸ GET    /appointments/physio/:id       — Appointments por id de fisio.
@@ -156,6 +159,30 @@ router.get(
           (appointment) => new Date(appointment.date) > new Date()
         );
         res.status(200).send({ ok: true, resultado: futureAppointments });
+      })
+      .catch((err) => {
+        if (res.length === 0) {
+          res.status(404).send({ ok: false, error: "Record not found" });
+        } else {
+          res.status(500).send({ ok: false, error: "Internal server error" });
+        }
+      });
+  }
+);
+
+//rutas status complete
+router.get(
+  "/appointmentComplete",
+  protegerRuta(["admin", "physio", "patient"]),
+  async (req, res) => {
+    Record.find()
+      .populate("patient")
+      .then((result) => {
+        let appointments = result.flatMap((record) => record.appointments);
+        let completeAppointments = appointments.filter(
+          (appointment) => appointment.status === "completed"
+        );
+        res.status(200).send({ ok: true, resultado: completeAppointments });
       })
       .catch((err) => {
         if (res.length === 0) {
