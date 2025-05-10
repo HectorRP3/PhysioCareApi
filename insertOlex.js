@@ -11,14 +11,15 @@ async function insertSingleUser() {
     await mongoose.connect(process.env.DB_URL);
     console.log("✅ Conectado a MongoDB");
 
+ const res = await User.deleteOne({ login: 'Olex' });
+
     const hashedPassword = await bcrypt.hash("1234", 10);
 
     const newUser = new User({
         login: "Olex",
-        password: "1234",
+        password: hashedPassword,
         rol: "admin",
     });
-
     const saved = await newUser.save();
     console.log("✅ Usuario insertado:", saved);
 
