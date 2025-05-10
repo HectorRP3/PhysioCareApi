@@ -11,7 +11,7 @@ function saveImage(dir, photo) {
       if (err) {
         reject(err);
       }
-      resolve(`public/img/${dir}/${file}`);
+      resolve(`/img/${dir}/${file}`);
     });
   });
 }
@@ -22,7 +22,7 @@ async function downloadImage(dir, url) {
     url,
     dest: filePath,
   });
-  return `public/img/${dir}/${file}`;
+  return `/img/${dir}/${file}`;
 }
 function removeImage(path) {
   return new Promise((resolve, reject) => {
