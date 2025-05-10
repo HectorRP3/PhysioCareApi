@@ -131,7 +131,9 @@ router.get(
         if (res.length === 0) {
           res.status(404).send({ ok: false, error: "Physio not found" });
         } else {
-          res.status(500).send({ ok: false, error: "Internal server error" });
+          res
+            .status(500)
+            .send({ ok: false, error: "Internal server error", fdsa: err });
         }
       });
   }
