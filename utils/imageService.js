@@ -22,7 +22,7 @@ async function downloadImage(dir, url) {
     url,
     dest: filePath,
   });
-  return `img/${dir}/${file}`;
+  return `public/img/${dir}/${file}`;
 }
 function removeImage(path) {
   return new Promise((resolve, reject) => {
