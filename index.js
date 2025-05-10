@@ -11,7 +11,7 @@ const Record2 = require("./routes/records");
 const Auth = require("./routes/auth");
 const bycrypt = require("bcryptjs");
 const cors = require("cors");
-
+const path = require("path");
 let app = express();
 app.use(
   cors({
