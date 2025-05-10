@@ -178,7 +178,11 @@ router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
 });
 
 router.put("/:id", protegerRuta(["admin"]), async (req, res) => {
-  const { name, surname, specialty, licenseNumber, email } = req.body;
+  const { name, surname, specialty, licenseNumber, email, avatar } = req.body;
+  let imageUrl = "";
+  if (avatar) {
+    imageUrl = await saveImage("physios", avatar);
+  }
   Physio.findByIdAndUpdate(
     req.params.id,
     {
@@ -187,6 +191,7 @@ router.put("/:id", protegerRuta(["admin"]), async (req, res) => {
       specialty,
       licenseNumber,
       email,
+      avatar: imageUrl,
     },
     { new: true }
   )
