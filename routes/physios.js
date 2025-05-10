@@ -123,6 +123,7 @@ router.get(
   protegerRuta(["admin", "physio", "patient"]),
   async (req, res) => {
     Physio.findById(req.params.id)
+      .populate("userID")
       .then((result) => {
         res.status(200).send({ ok: true, resultado: result });
       })
