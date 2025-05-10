@@ -6,23 +6,23 @@ function saveImage(dir, photo) {
   const data = photo.split(",")[1] || photo;
   const file = `${Date.now()}.jpg`;
   return new Promise((resolve, reject) => {
-    const filePath = path.join("img", dir, file);
+    const filePath = path.join("public/img", dir, file);
     fs.writeFile(filePath, data, { encoding: "base64" }, (err) => {
       if (err) {
         reject(err);
       }
-      resolve(`/img/${dir}/${file}`);
+      resolve(`public/img/${dir}/${file}`);
     });
   });
 }
 async function downloadImage(dir, url) {
   const file = `${Date.now()}.jpg`;
-  const filePath = path.join(path.resolve("./"), "img", dir, file);
+  const filePath = path.join(path.resolve("./public"), "img", dir, file);
   await download.image({
     url,
     dest: filePath,
   });
-  return `/img/${dir}/${file}`;
+  return `img/${dir}/${file}`;
 }
 function removeImage(path) {
   return new Promise((resolve, reject) => {
