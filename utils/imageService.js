@@ -11,7 +11,7 @@ function saveImage(dir, photo) {
       if (err) {
         reject(err);
       }
-      resolve(`img/${dir}/${file}`);
+      resolve(`public/img/${dir}/${file}`);
     });
   });
 }
