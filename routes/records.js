@@ -16,7 +16,6 @@ const Physio = require(__dirname + "/../models/physio");
 // ▸ GET    /find                          — Búsqueda por apellido de paciente.
 // ▸ POST   /                               — Crea un nuevo historial.
 //
-// ▸ GET    /moviles                       — Lista con populate de paciente (app móvil).
 // ▸ Get    /appointmentAdmin
 //  ▸ Get /appointmentsPast
 //  ▸ Get /appointmentsFuture
@@ -51,35 +50,6 @@ router.get("/", protegerRuta(["admin", "physio"]), async (req, res) => {
       }
     });
 });
-
-// router.get(
-//   "/patient/:id/appointsments/dates",
-//   protegerRuta(["admin", "physio", "patient"]),
-//   async (req, res) => {
-//     let id = req.params.id;
-//     let patient = await Patient.findById(id);
-//     console.log(patient);
-//     if (!patient) {
-//       res.status(404).send({
-//         ok: false,
-//         error: "No existe paciente con id " + req.params.id,
-//       });
-//     }
-
-//     Record.findOne({ patient: patient }).then((result) => {
-//       //   res.status(200).send({ ok: true, resultado: result });
-//       //   console.log(appointments);
-//       // let app = result.appointments.map(r);
-//       // console.log(app);
-//       // res.status(200).send({ ok: true, resultado: app });
-//       if (result.appointments) {
-//         res.status(200).send({ ok: true, result: result.appointments });
-//       } else {
-//         res.status(404).send({ ok: false, result: "No hay citas registradas" });
-//       }
-//     });
-//   }
-// );
 
 router.get("/find", protegerRuta(["admin", "physio"]), async (req, res) => {
   let result;
@@ -194,21 +164,6 @@ router.get(
       });
   }
 );
-
-router.get("/moviles", protegerRuta(["admin", "physio"]), async (req, res) => {
-  Record.find()
-    .populate("patient")
-    .then((result) => {
-      res.status(200).send({ ok: true, resultado: result });
-    })
-    .catch((err) => {
-      if (res.length === 0) {
-        res.status(404).send({ ok: false, error: "Record not found" });
-      } else {
-        res.status(500).send({ ok: false, error: "Internal server error" });
-      }
-    });
-});
 
 router.get("/appointmentAdmin", protegerRuta(["admin"]), async (req, res) => {
   Record.find()
