@@ -23,7 +23,7 @@ const Physio = require(__dirname + "/../models/physio");
 // ▸ GET    /appointments/:id              — Appointment por id de cita.
 // ▸ GET    /appointments/patients/:id     — Appointments por id de paciente.
 // ▸ GET    /appointments/physio/:id       — Appointments por id de fisio.
-// ▸ POST   /appointments/:id              — Añade appointment a un record
+// ▸ POST   /appointments/:id              — Añade appointment a un recordS
 // ▸ PUT   /appointments/:id              - Editar appointment a un record..
 // ▸ DELETE /appointments/:id              — Borra appointment por id de cita.
 
