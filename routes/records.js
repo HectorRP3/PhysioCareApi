@@ -39,6 +39,7 @@ const Physio = require(__dirname + "/../models/physio");
 // ------------------------------------------------------------
 router.get("/", protegerRuta(["admin", "physio"]), async (req, res) => {
   Record.find()
+    .populate("patient")
     .then((result) => {
       res.status(200).send({ ok: true, resultado: result });
     })
