@@ -31,6 +31,7 @@ let appointmentsSchema = new mongoose.Schema({
     },
     default: "pending",
   },
+  // añadir la referecnia del patient
 });
 let recordSchema = new mongoose.Schema({
   patient: {
