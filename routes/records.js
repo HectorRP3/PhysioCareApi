@@ -89,12 +89,16 @@ router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
       res.status(500).send({ ok: false, error: "Internal server error" });
     });
 });
+/**
+ * Este para poner el filtro
+ * filter=past|future|completed
+ */
 router.get(
   "/appointments",
   protegerRuta(["admin", "physio", "patient"]),
   async (req, res) => {
     try {
-      const { filter } = req.query; // 'past', 'future' o 'complete'
+      const { filter } = req.query; // 'past', 'future' o 'completed'
       const records = await Record.find().populate("patient");
       if (!records.length) {
         return res
@@ -113,7 +117,7 @@ router.get(
         case "future":
           resultado = all.filter((appt) => new Date(appt.date) > now);
           break;
-        case "complete":
+        case "completed":
           resultado = all.filter((appt) => appt.status === "completed");
           break;
         default:
@@ -127,82 +131,6 @@ router.get(
         .status(500)
         .send({ ok: false, error: "Error interno del servidor" });
     }
-  }
-);
-// MOVILES
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-// Esta ruta es para ver todos los record pero con el populate del patient
-//unificar la rutas de filtros y la general
-//rutas pasadas
-router.get(
-  "/appointmentsPast",
-  protegerRuta(["admin", "physio", "patient"]),
-  async (req, res) => {
-    Record.find()
-      .populate("patient")
-      .then((result) => {
-        let appointments = result.flatMap((record) => record.appointments);
-        let pastAppointments = appointments.filter(
-          (appointment) => new Date(appointment.date) < new Date()
-        );
-        res.status(200).send({ ok: true, resultado: pastAppointments });
-      })
-      .catch((err) => {
-        if (res.length === 0) {
-          res.status(404).send({ ok: false, error: "Record not found" });
-        } else {
-          res.status(500).send({ ok: false, error: "Internal server error" });
-        }
-      });
-  }
-);
-//rutasfuturas
-router.get(
-  "/appointmentsFuture",
-  protegerRuta(["admin", "physio", "patient"]),
-  async (req, res) => {
-    Record.find()
-      .populate("patient")
-      .then((result) => {
-        let appointments = result.flatMap((record) => record.appointments);
-        let futureAppointments = appointments.filter(
-          (appointment) => new Date(appointment.date) > new Date()
-        );
-        res.status(200).send({ ok: true, resultado: futureAppointments });
-      })
-      .catch((err) => {
-        if (res.length === 0) {
-          res.status(404).send({ ok: false, error: "Record not found" });
-        } else {
-          res.status(500).send({ ok: false, error: "Internal server error" });
-        }
-      });
-  }
-);
-
-//rutas status complete
-router.get(
-  "/appointmentComplete",
-  protegerRuta(["admin", "physio", "patient"]),
-  async (req, res) => {
-    Record.find()
-      .populate("patient")
-      .then((result) => {
-        let appointments = result.flatMap((record) => record.appointments);
-        let completeAppointments = appointments.filter(
-          (appointment) => appointment.status === "completed"
-        );
-        res.status(200).send({ ok: true, resultado: completeAppointments });
-      })
-      .catch((err) => {
-        if (res.length === 0) {
-          res.status(404).send({ ok: false, error: "Record not found" });
-        } else {
-          res.status(500).send({ ok: false, error: "Internal server error" });
-        }
-      });
   }
 );
 
