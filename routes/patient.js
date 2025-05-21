@@ -7,6 +7,8 @@ dotenv.config();
 const Patient = require(__dirname + "/../models/patient");
 const User = require(__dirname + "/../models/users");
 const Auth = require(__dirname + "/../auth/auth");
+const Record = require(__dirname + "/../models/record");
+
 // ------------------------------------------------------------
 // patientRoutes.js
 // ------------------------------------------------------------
@@ -114,9 +116,29 @@ router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
   IMPORTANTE que el id del usuario se le asigna al paciente y no al reves
   y EN LOS CAMPOS DE ARRIBA SE TIENE QUE AÑADIR el password y el login
   */
+  //  const newRecord = new Record({
+  //     patient,
+  //     medicalRecord,
+  //     appointments,
+  //   });
+  //   newRecord
+  //     .save()
+  //     .then((result) => {
+  //       res.status(200).send({ ok: true, resultado: result });
+  //     })
+  //     .catch((err) => {
+  //       res.status(500).send({ ok: false, error: "Internal server error" });
+  //     });
+
   newPatient
     .save()
-    .then((result) => {
+    .then(async (result) => {
+      const newRecord = new Record({
+        patient: result._id,
+        medicalRecord: [],
+        appointments: [],
+      });
+      await newRecord.save();
       res.status(200).send({ ok: true, resultado: result });
     })
     .catch((err) => {
