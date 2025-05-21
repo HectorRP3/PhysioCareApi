@@ -36,20 +36,68 @@ const Physio = require(__dirname + "/../models/physio");
 // ▸ PUT    /:id                           — Modifica un record existente.
 // ▸ DELETE /:id                           — Elimina un record.
 // ------------------------------------------------------------
-router.get("/", protegerRuta(["admin", "physio"]), async (req, res) => {
-  Record.find()
-    .populate("patient")
-    .then((result) => {
-      res.status(200).send({ ok: true, resultado: result });
-    })
-    .catch((err) => {
-      if (res.length === 0) {
-        res.status(404).send({ ok: false, error: "Record not found" });
-      } else {
-        res.status(500).send({ ok: false, error: "Internal server error" });
+router.get(
+  "/",
+  protegerRuta(["admin", "physio", "patient"]),
+  async (req, res) => {
+    const { filter, status } = req.query;
+
+    try {
+      // 1) Obtener todos los records con paciente
+      const records = await Record.find().populate("patient");
+
+      let resultado;
+
+      // 2) Si piden past/future appointment, aplano y filtro por fecha
+      if (filter === "past" || filter === "future") {
+        const now = new Date();
+        const allAppointments = records.flatMap((rec) => rec.appointments);
+        resultado = allAppointments.filter((appt) =>
+          filter === "past"
+            ? new Date(appt.date) < now
+            : new Date(appt.date) > now
+        );
       }
-    });
-});
+      // 3) Si piden por status
+      else if (status) {
+        const allAppointments = records.flatMap((rec) => rec.appointments);
+        resultado = allAppointments.filter((appt) => appt.status === status);
+      }
+      // 4) Si no hay query, devuelvo los records completos
+      else {
+        resultado = records;
+      }
+
+      // 5) Si no hay resultados, 404
+      if (!resultado || (Array.isArray(resultado) && resultado.length === 0)) {
+        return res
+          .status(404)
+          .send({ ok: false, error: "No se han encontrado resultados" });
+      }
+
+      // 6) De lo contrario, 200 con datos
+      res.status(200).send({ ok: true, resultado });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({ ok: false, error: "Error interno del servidor" });
+    }
+  }
+);
+
+// router.get("/", protegerRuta(["admin", "physio"]), async (req, res) => {
+//   Record.find()
+//     .populate("patient")
+//     .then((result) => {
+//       res.status(200).send({ ok: true, resultado: result });
+//     })
+//     .catch((err) => {
+//       if (res.length === 0) {
+//         res.status(404).send({ ok: false, error: "Record not found" });
+//       } else {
+//         res.status(500).send({ ok: false, error: "Internal server error" });
+//       }
+//     });
+// });
 
 router.get("/find", protegerRuta(["admin", "physio"]), async (req, res) => {
   let result;
