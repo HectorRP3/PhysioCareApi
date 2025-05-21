@@ -31,6 +31,11 @@ let appointmentsSchema = new mongoose.Schema({
     },
     default: "pending",
   },
+  patient: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "patient",
+    require: false,
+  },
   // añadir la referecnia del patient
 });
 let recordSchema = new mongoose.Schema({

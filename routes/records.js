@@ -346,6 +346,13 @@ router.post(
   async (req, res) => {
     const { date, physio, diagnosis, treatment, observations, status } =
       req.body;
+    const record = await Record.findById(req.params.id);
+    if (!record) {
+      return res.status(404).send({
+        ok: false,
+        error: "No existe record con id " + req.params.id,
+      });
+    }
     const newAppointment = {
       date,
       physio,
@@ -353,7 +360,9 @@ router.post(
       treatment,
       observations,
       status,
+      patient: record.patient,
     };
+
     Record.findByIdAndUpdate(req.params.id, {
       $push: { appointments: newAppointment },
     })
