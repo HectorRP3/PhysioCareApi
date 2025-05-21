@@ -135,7 +135,7 @@ router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
     .then(async (result) => {
       const newRecord = new Record({
         patient: result._id,
-        medicalRecord: [],
+        medicalRecord: "",
         appointments: [],
       });
       await newRecord.save();
