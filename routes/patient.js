@@ -86,7 +86,10 @@ router.get(
       }
     }
     Patient.findById(req.params.id)
-      .then((result) => {
+      .then(async (result) => {
+        const record = await Record.find({ patient: req.params.id });
+        const appointments = record[0].appointments;
+        result.appointments = appointments;
         res.status(200).send({ ok: true, resultado: result });
       })
       .catch((err) => {
