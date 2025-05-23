@@ -2,6 +2,7 @@ const express = require("express");
 const { protegerRuta, validarToken } = require("../auth/auth");
 let router = express.Router();
 const dotenv = require("dotenv");
+const e = require("express");
 dotenv.config();
 
 const Patient = require(__dirname + "/../models/patient");
@@ -173,7 +174,8 @@ router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
 });
 
 router.put("/:id", protegerRuta(["admin", "physio"]), async (req, res) => {
-  const { name, surname, birthDate, address, insuranceNumber } = req.body;
+  const { name, surname, birthDate, address, insuranceNumber, email } =
+    req.body;
   Patient.findByIdAndUpdate(
     req.params.id,
     {
@@ -182,6 +184,7 @@ router.put("/:id", protegerRuta(["admin", "physio"]), async (req, res) => {
       birthDate,
       address,
       insuranceNumber,
+      email,
     },
     { new: true }
   )
