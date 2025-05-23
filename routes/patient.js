@@ -89,6 +89,7 @@ router.get(
       .then(async (result) => {
         const record = await Record.find({ patient: req.params.id });
         const appointments = record.flatMap((rec) => rec.appointments);
+        console.log("objects", appointments);
         result.appointments = appointments;
         res.status(200).send({ ok: true, resultado: result });
       })
