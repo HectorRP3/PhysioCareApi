@@ -91,6 +91,7 @@ router.get(
         const appointments = record.flatMap((rec) => rec.appointments);
         console.log("objects", appointments);
         result.appointments = appointments;
+        console.log("result", result);
         res.status(200).send({ ok: true, resultado: result });
       })
       .catch((err) => {
