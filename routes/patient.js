@@ -88,7 +88,7 @@ router.get(
     Patient.findById(req.params.id)
       .then(async (result) => {
         const record = await Record.find({ patient: req.params.id });
-        const appointments = record[0].appointments;
+        const appointments = record.flatMap((rec) => rec.appointments);
         result.appointments = appointments;
         res.status(200).send({ ok: true, resultado: result });
       })
