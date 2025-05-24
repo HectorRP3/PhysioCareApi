@@ -11,7 +11,7 @@ let userSchema = new mongoose.Schema({
   password: {
     type: String,
     require: true,
-    minlenght: 7,
+    minlenght: 3,
     trim: true,
   },
   rol: {
