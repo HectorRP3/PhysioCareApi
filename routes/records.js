@@ -254,21 +254,22 @@ router.get(
   protegerRuta(["admin", "physio", "patient"]),
   async (req, res) => {
     let { id } = req.params.id;
-    let user = req.user.login;
-    let userRole = req.user.rol;
+    // let user = req.user.login;
 
-    if (userRole !== "admin" && userRole !== "physio") {
-      let userID = await Patient.findOne({ name: user }).then((result) => {
-        u = result._id.toString();
-        return u;
-      });
-      if (userRole === "patient" && req.params.id !== userID) {
-        return res.status(403).send({
-          ok: false,
-          error: "Only the patient can see his/her own data",
-        });
-      }
-    }
+    // let userRole = req.user.rol;
+
+    // if (userRole !== "admin" && userRole !== "physio") {
+    //   let userID = await Patient.findOne({ name: user }).then((result) => {
+    //     u = result._id.toString();
+    //     return u;
+    //   });
+    //   if (userRole === "patient" && req.params.id !== userID) {
+    //     return res.status(403).send({
+    //       ok: false,
+    //       error: "Only the patient can see his/her own data",
+    //     });
+    //   }
+    // }
     Record.findOne({ patient: id })
       .populate("patient")
       .then((result) => {
