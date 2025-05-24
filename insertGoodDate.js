@@ -10,8 +10,8 @@ async function loadData() {
     // await Physio.deleteMany({});
     // await Record.deleteMany({});
     // await User.deleteMany({});
-    await User.delete({ login: "hectorPhysio" });
-    await User.delete({ login: "olexPhysio" });
+    await User.deleteMany({ login: "hectorPhysio" });
+    await User.deleteMany({ login: "olexPhysio" });
     const users = [
       new User({
         login: "olexPhysio",
