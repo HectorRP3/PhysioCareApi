@@ -37,7 +37,7 @@ async function loadData() {
         surname: "López",
         birthDate: new Date("1985-06-15"),
         address: "Calle Mayor 123, Alicante",
-        insuranceNumber: "123456789",
+        insuranceNumber: "123406789",
         email: "hectorrodriguezplanelles@gmail.com",
       }),
       new Patient({
@@ -45,7 +45,7 @@ async function loadData() {
         surname: "Pérez",
         birthDate: new Date("1990-09-22"),
         address: "Avenida del Sol 45, Valencia",
-        insuranceNumber: "987654321",
+        insuranceNumber: "980654321",
         email: "hectorrodriguezplanelles@gmail.com",
       }),
       new Patient({
@@ -53,7 +53,7 @@ async function loadData() {
         surname: "Martínez",
         birthDate: new Date("1975-03-11"),
         address: "Calle de la Luna 89, Alicante",
-        insuranceNumber: "456789123",
+        insuranceNumber: "456784123",
         email: "hectorrodriguezplanelles@gmail.com",
       }),
       new Patient({
@@ -61,7 +61,7 @@ async function loadData() {
         surname: "Sanz",
         birthDate: new Date("1992-05-30"),
         address: "Plaza Mayor 22, Valencia",
-        insuranceNumber: "321654987",
+        insuranceNumber: "321657987",
         email: "hectorrodriguezplanelles@gmail.com",
       }),
     ];
@@ -78,7 +78,7 @@ async function loadData() {
         name: "Olex",
         surname: "Martínez",
         specialty: "Sports",
-        licenseNumber: "A1234567",
+        licenseNumber: "A1236567",
         email: "hectorrodriguezplanelles@gmail.com",
         userID: savedUsers[0]._id,
       }),
@@ -86,7 +86,7 @@ async function loadData() {
         name: "Hector",
         surname: "Fernández",
         specialty: "Neurological",
-        licenseNumber: "B7654321",
+        licenseNumber: "B7658321",
         email: "hectorrodriguezplanelles@gmail.com",
         userID: savedUsers[1]._id,
       }),
@@ -94,7 +94,7 @@ async function loadData() {
         name: "Mario",
         surname: "Sánchez",
         specialty: "Pediatric",
-        licenseNumber: "C9876543",
+        licenseNumber: "C9836543",
         email: "hectorrodriguezplanelles@gmail.com",
       }),
     ];
