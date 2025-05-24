@@ -144,8 +144,6 @@ router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
     email,
     userID: newUser._id, // Assign the user ID to the patient
   });
-  const hashedPassword = await Auth.hashPassword(newUser.password);
-  newUser.password = hashedPassword;
   newPatient
     .save()
     .then(async (result) => {
