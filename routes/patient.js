@@ -137,6 +137,7 @@ router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
     password: bycrypt.hash(password, 10), // Hash the password
     rol: "patient",
   });
+  newUser.save();
   const newPatient = new Patient({
     name,
     surname,
