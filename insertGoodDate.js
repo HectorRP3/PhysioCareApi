@@ -29,8 +29,8 @@ async function loadData() {
       users[i].password = hashedPassword;
     }
 
-    // const savedUsers = await Promise.all(users.map((user) => user.save()));
-    // console.log("Added users:", savedUsers);
+    const savedUsers = await Promise.all(users.map((user) => user.save()));
+    console.log("Added users:", savedUsers);
     // Create some patients
     // const patients = [
     //   new Patient({
