@@ -177,7 +177,7 @@ router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
     });
 });
 
-router.put("/:id", protegerRuta(["admin"]), async (req, res) => {
+router.put("/:id", protegerRuta(["admin", "physio"]), async (req, res) => {
   const { name, surname, specialty, licenseNumber, email, avatar } = req.body;
   let imageUrl = "";
   if (avatar) {
