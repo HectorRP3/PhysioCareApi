@@ -271,6 +271,7 @@ router.get(
     //   }
     // }
     Record.find({ patient: req.params.id })
+      .populate("appointments")
       .populate("patient")
       .then((result) => {
         res.status(200).send({ ok: true, resultado: result });
