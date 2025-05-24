@@ -105,6 +105,77 @@ async function loadData() {
       physios.map((physio) => physio.save())
     );
     console.log("Added physios:", savedPhysios);
+
+    const records = [
+      new Record({
+        patient: savedPatients[0]._id,
+        medicalRecord:
+          "Paciente con antecedentes de lesiones en rodilla y cadera.",
+        appointments: [
+          {
+            date: new Date("2024-02-10"),
+            physio: savedPhysios[0]._id, // Sports specialty physio
+            diagnosis: "Distensión de ligamentos de la rodilla",
+            treatment: "Rehabilitación con ejercicios de fortalecimiento",
+            observations:
+              "Se recomienda evitar actividad intensa por 6 semanas",
+          },
+          {
+            date: new Date("2024-03-01"),
+            physio: savedPhysios[0]._id,
+            diagnosis: "Mejoría notable, sin dolor agudo",
+            treatment: "Continuar con ejercicios, añadir movilidad funcional",
+            observations: "Próxima revisión en un mes",
+          },
+        ],
+      }),
+      new Record({
+        patient: savedPatients[1]._id,
+        medicalRecord: "Paciente con problemas neuromusculares.",
+        appointments: [
+          {
+            date: new Date("2024-02-15"),
+            physio: savedPhysios[1]._id, // Neurological specialty physio
+            diagnosis: "Debilidad muscular en miembros inferiores",
+            treatment: "Terapia neuromuscular y estiramientos",
+            observations: "Revisar la evolución en 3 semanas",
+          },
+        ],
+      }),
+      new Record({
+        patient: savedPatients[2]._id,
+        medicalRecord: "Lesión de hombro recurrente, movilidad limitada.",
+        appointments: [
+          {
+            date: new Date("2024-01-25"),
+            physio: savedPhysios[2]._id, // Pediatric specialty physio
+            diagnosis: "Tendinitis en el manguito rotador",
+            treatment: "Ejercicios de movilidad y fortalecimiento",
+            observations: "Revisar en 4 semanas",
+          },
+        ],
+      }),
+      new Record({
+        patient: savedPatients[3]._id,
+        medicalRecord: "Paciente con problemas oncológicos.",
+        appointments: [
+          {
+            date: new Date("2024-01-15"),
+            physio: savedPhysios[2]._id, // Oncology specialty physio
+            diagnosis: "Fatiga post-tratamiento oncológico",
+            treatment: "Ejercicios suaves y terapia de relajación",
+            observations: "Revisión en 2 semanas",
+          },
+        ],
+      }),
+    ];
+    //save users {{"usuario":"hector2","password":"1234","rol":"admin"}}
+
+    // Save all files using Promise.all
+    const savedRecords = await Promise.all(
+      records.map((record) => record.save())
+    );
+    console.log("Added records:", savedRecords);
   } catch (error) {
     console.error("Error loading data:", error);
     mongoose.disconnect();
