@@ -2,7 +2,7 @@ const Patient = require("./models/patient");
 const Physio = require("./models/physio");
 const User = require("./models/users");
 const mongoose = require("mongoose");
-
+const bycrypt = require("bcryptjs");
 async function loadData() {
   try {
     // Clean existing collections
