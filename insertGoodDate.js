@@ -11,25 +11,25 @@ async function loadData() {
     // await Record.deleteMany({});
     // await User.deleteMany({});
 
-    const users = [
-      new User({
-        login: "olexPhysio",
-        password: "1234",
-        rol: "physio",
-      }),
-      new User({
-        login: "hectorPhysio",
-        password: "1234",
-        rol: "physio",
-      }),
-    ];
-    for (let i = 0; i < users.length; i++) {
-      const hashedPassword = await bycrypt.hash(users[i].password, 10);
-      users[i].password = hashedPassword;
-    }
+    // const users = [
+    //   new User({
+    //     login: "olexPhysio",
+    //     password: "1234",
+    //     rol: "physio",
+    //   }),
+    //   new User({
+    //     login: "hectorPhysio",
+    //     password: "1234",
+    //     rol: "physio",
+    //   }),
+    // ];
+    // for (let i = 0; i < users.length; i++) {
+    //   const hashedPassword = await bycrypt.hash(users[i].password, 10);
+    //   users[i].password = hashedPassword;
+    // }
 
-    const savedUsers = await Promise.all(users.map((user) => user.save()));
-    console.log("Added users:", savedUsers);
+    // const savedUsers = await Promise.all(users.map((user) => user.save()));
+    // console.log("Added users:", savedUsers);
     // Create some patients
     const patients = [
       new Patient({
