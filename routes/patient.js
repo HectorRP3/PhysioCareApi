@@ -110,6 +110,8 @@ router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
     email,
     password,
   } = req.body;
+  console.log("body", req.body);
+  console.log("password", password);
 
   /*
   Aqui se tiene que crear el usuario y asignarle el rol de paciente
