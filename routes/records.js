@@ -270,7 +270,7 @@ router.get(
     //     });
     //   }
     // }
-    Record.find({ patient: req.params.id })
+    Record.findOne({ patient: req.params.id })
       .populate("appointments")
       .populate("patient")
       .then((result) => {
