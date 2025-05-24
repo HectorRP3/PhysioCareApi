@@ -4,6 +4,7 @@ let router = express.Router();
 const dotenv = require("dotenv");
 const e = require("express");
 dotenv.config();
+const bycrypt = require("bcryptjs");
 
 const Patient = require(__dirname + "/../models/patient");
 const User = require(__dirname + "/../models/users");
@@ -100,17 +101,16 @@ router.get(
 );
 
 router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
-  const { name, surname, birthDate, address, insuranceNumber, email } =
-    req.body;
-  const newPatient = new Patient({
+  const {
     name,
     surname,
     birthDate,
     address,
     insuranceNumber,
     email,
-    // userID: userId // Aquí se asigna el id del usuario al paciente pero se coge arriba donde los campos,
-  });
+    password,
+  } = req.body;
+
   /*
   Aqui se tiene que crear el usuario y asignarle el rol de paciente
   y a patient despues de crear el paciente se le asigna el id del usuario
@@ -130,7 +130,22 @@ router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
   //     .catch((err) => {
   //       res.status(500).send({ ok: false, error: "Internal server error" });
   //     });
-
+  const newUser = new User({
+    login: name,
+    password: bycrypt.hash(password, 10), // Hash the password
+    rol: "patient",
+  });
+  const newPatient = new Patient({
+    name,
+    surname,
+    birthDate,
+    address,
+    insuranceNumber,
+    email,
+    userID: newUser._id, // Assign the user ID to the patient
+  });
+  const hashedPassword = await Auth.hashPassword(newUser.password);
+  newUser.password = hashedPassword;
   newPatient
     .save()
     .then(async (result) => {
