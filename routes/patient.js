@@ -110,28 +110,6 @@ router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
     email,
     password,
   } = req.body;
-  console.log("body", req.body);
-  console.log("password", password);
-
-  /*
-  Aqui se tiene que crear el usuario y asignarle el rol de paciente
-  y a patient despues de crear el paciente se le asigna el id del usuario
-  IMPORTANTE que el id del usuario se le asigna al paciente y no al reves
-  y EN LOS CAMPOS DE ARRIBA SE TIENE QUE AÑADIR el password y el login
-  */
-  //  const newRecord = new Record({
-  //     patient,
-  //     medicalRecord,
-  //     appointments,
-  //   });
-  //   newRecord
-  //     .save()
-  //     .then((result) => {
-  //       res.status(200).send({ ok: true, resultado: result });
-  //     })
-  //     .catch((err) => {
-  //       res.status(500).send({ ok: false, error: "Internal server error" });
-  //     });
   const newUser = new User({
     login: name,
     password: await bycrypt.hash(password, 10), // Hash the password
@@ -175,19 +153,6 @@ router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
       } else {
         res.status(500).send({ ok: false, error: "Internal server error" });
       }
-      // if (err.code === 11000) {
-      //   res.status(409).send({
-      //     ok: false,
-      //     error: "El número de seguro ya existe",
-      //   });
-      // } else {
-      //   if (err.errors.name) {
-      //     res.status(400).send({
-      //       ok: false,
-      //       error: err.errors.name.message,
-      //     });
-      //   }
-      // }
     });
 });
 
