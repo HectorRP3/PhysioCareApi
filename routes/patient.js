@@ -214,15 +214,15 @@ router.put("/:id", protegerRuta(["admin", "physio"]), async (req, res) => {
 });
 
 router.delete("/:id", protegerRuta(["admin", "physio"]), async (req, res) => {
+  Record.findOneAndDelete({ patient: req.params.id }).then((result) => {
+    if (result) {
+      console.log("Record deleted");
+    } else {
+      console.log("Record not found");
+    }
+  });
   Patient.findByIdAndDelete(req.params.id)
     .then((result) => {
-      Record.findOneAndDelete({ patient: req.params.id }).then((result) => {
-        if (result) {
-          console.log("Record deleted");
-        } else {
-          console.log("Record not found");
-        }
-      });
       res.status(200).send({ ok: true, resultado: result });
     })
     .catch((err) => {
