@@ -17,9 +17,6 @@ const Physio = require(__dirname + "/../models/physio");
 // ▸ POST   /                               — Crea un nuevo historial.
 //
 // ▸ Get    /appointmentAdmin
-//  ▸ Get /appointmentsPast
-//  ▸ Get /appointmentsFuture
-// ▸ Get /appointmentComplete
 // ▸ GET    /appointments/:id              — Appointment por id de cita.
 // ▸ GET    /appointments/patients/:id     — Appointments por id de paciente.
 // ▸ GET    /appointments/physio/:id       — Appointments por id de fisio.
@@ -189,32 +186,68 @@ router.get(
  * En el caso de que haya un error, se devuelve un 500
  */
 //Buscar Appointment por id del patient
+// router.get(
+//   "/appointments/patients/:id",
+//   protegerRuta(["admin", "physio", "patient"]),
+//   async (req, res) => {
+//     Patient.findById(req.params.id).then((patient) => {
+//       if (!patient) {
+//         return res.status(404).send({
+//           ok: false,
+//           error: "No existe paciente con id " + req.params.id,
+//         });
+//       }
+//       Record.find({ patient: patient._id })
+//         .then((result) => {
+//           let appointments = result.map((record) => record.appointments);
+//           appointments = appointments.flatMap((record) => record);
+
+//           res.status(200).send({ ok: true, resultado: appointments });
+//         })
+//         .catch((err) => {
+//           if (res.length === 0) {
+//             res.status(404).send({ ok: false, error: "Record not found" });
+//           } else {
+//             res.status(500).send({ ok: false, error: "Internal server error" });
+//           }
+//         });
+//     });
+//   }
+// );
 router.get(
   "/appointments/patients/:id",
   protegerRuta(["admin", "physio", "patient"]),
   async (req, res) => {
-    Patient.findById(req.params.id).then((patient) => {
+    const { filter } = req.query; // lee ?filter=pasado o ?filter=futuro
+    const ahora = new Date();
+
+    try {
+      const patient = await Patient.findById(req.params.id);
       if (!patient) {
         return res.status(404).send({
           ok: false,
           error: "No existe paciente con id " + req.params.id,
         });
       }
-      Record.find({ patient: patient._id })
-        .then((result) => {
-          let appointments = result.map((record) => record.appointments);
-          appointments = appointments.flatMap((record) => record);
 
-          res.status(200).send({ ok: true, resultado: appointments });
-        })
-        .catch((err) => {
-          if (res.length === 0) {
-            res.status(404).send({ ok: false, error: "Record not found" });
-          } else {
-            res.status(500).send({ ok: false, error: "Internal server error" });
-          }
-        });
-    });
+      const records = await Record.find({ patient: patient._id });
+      let appointments = records.flatMap((r) => r.appointments);
+
+      // Filtrado según filter=pasado|futuro
+      if (filter === "pasado") {
+        appointments = appointments.filter((a) => new Date(a.date) < ahora);
+      } else if (filter === "futuro") {
+        appointments = appointments.filter((a) => new Date(a.date) > ahora);
+      }
+      // si filter no es ni "pasado" ni "futuro", devolvemos todas
+
+      return res.status(200).send({ ok: true, resultado: appointments });
+    } catch (err) {
+      console.error(err);
+      return res
+        .status(500)
+        .send({ ok: false, error: "Internal server error" });
+    }
   }
 );
 //Buscar Appointment por id del fisio
@@ -248,28 +281,13 @@ router.get(
     });
   }
 );
-//Coger record por id del record with populate del patient
+//Coger record por id del opatient
 router.get(
   "/patient/:id",
   protegerRuta(["admin", "physio", "patient"]),
   async (req, res) => {
     let { id } = req.params.id;
-    // let user = req.user.login;
 
-    // let userRole = req.user.rol;
-
-    // if (userRole !== "admin" && userRole !== "physio") {
-    //   let userID = await Patient.findOne({ name: user }).then((result) => {
-    //     u = result._id.toString();
-    //     return u;
-    //   });
-    //   if (userRole === "patient" && req.params.id !== userID) {
-    //     return res.status(403).send({
-    //       ok: false,
-    //       error: "Only the patient can see his/her own data",
-    //     });
-    //   }
-    // }
     Record.findOne({ patient: req.params.id })
       .populate("appointments")
       .populate("patient")
