@@ -253,11 +253,45 @@ router.get(
   }
 );
 //Buscar Appointment por id del fisio
+// router.get(
+//   "/appointments/physio/:id",
+//   protegerRuta(["admin", "physio"]),
+//   async (req, res) => {
+//     Physio.findById(req.params.id).then((physio) => {
+//       if (!physio) {
+//         return res.status(404).send({
+//           ok: false,
+//           error: "No existe physio con id " + req.params.id,
+//         });
+//       }
+
+//       Record.find({})
+//         .then((result) => {
+//           let appointments = result.flatMap((record) => record.appointments);
+//           let physios = appointments.filter(
+//             (r) => r.physio.toString() === physio.id.toString()
+//           );
+//           res.status(200).send({ ok: true, resultado: physios });
+//         })
+//         .catch((err) => {
+//           if (res.length === 0) {
+//             res.status(404).send({ ok: false, error: "Record not found" });
+//           } else {
+//             res.status(500).send({ ok: false, error: "Internal server error" });
+//           }
+//         });
+//     });
+//   }
+// );
 router.get(
   "/appointments/physio/:id",
   protegerRuta(["admin", "physio"]),
   async (req, res) => {
-    Physio.findById(req.params.id).then((physio) => {
+    const { filter } = req.query; // lee ?filter=pasado o ?filter=futuro
+    const ahora = new Date();
+
+    try {
+      const physio = await Physio.findById(req.params.id);
       if (!physio) {
         return res.status(404).send({
           ok: false,
@@ -265,24 +299,32 @@ router.get(
         });
       }
 
-      Record.find({})
-        .then((result) => {
-          let appointments = result.flatMap((record) => record.appointments);
-          let physios = appointments.filter(
-            (r) => r.physio.toString() === physio.id.toString()
-          );
-          res.status(200).send({ ok: true, resultado: physios });
-        })
-        .catch((err) => {
-          if (res.length === 0) {
-            res.status(404).send({ ok: false, error: "Record not found" });
-          } else {
-            res.status(500).send({ ok: false, error: "Internal server error" });
-          }
-        });
-    });
+      const records = await Record.find({});
+      // 1) Aplanamos todas las citas
+      let appointments = records.flatMap((record) => record.appointments);
+      // 2) Filtramos solo las del physio en cuestión
+      appointments = appointments.filter(
+        (a) => a.physio.toString() === physio._id.toString()
+      );
+
+      // 3) Filtrado según filter=pasado|futuro
+      if (filter === "pasado") {
+        appointments = appointments.filter((a) => new Date(a.date) < ahora);
+      } else if (filter === "futuro") {
+        appointments = appointments.filter((a) => new Date(a.date) > ahora);
+      }
+      // si filter no es ni "pasado" ni "futuro", devolvemos todas las de este physio
+
+      return res.status(200).send({ ok: true, resultado: appointments });
+    } catch (err) {
+      console.error(err);
+      return res
+        .status(500)
+        .send({ ok: false, error: "Internal server error" });
+    }
   }
 );
+
 //Coger record por id del opatient
 router.get(
   "/patient/:id",
