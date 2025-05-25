@@ -308,9 +308,9 @@ router.get(
       );
 
       // 3) Filtrado según filter=pasado|futuro
-      if (filter === "pasado") {
+      if (filter === "past") {
         appointments = appointments.filter((a) => new Date(a.date) < ahora);
-      } else if (filter === "futuro") {
+      } else if (filter === "future") {
         appointments = appointments.filter((a) => new Date(a.date) > ahora);
       }
       // si filter no es ni "pasado" ni "futuro", devolvemos todas las de este physio
