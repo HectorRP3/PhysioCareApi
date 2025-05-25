@@ -220,7 +220,8 @@ router.get(
   async (req, res) => {
     const { filter } = req.query; // lee ?filter=pasado o ?filter=futuro
     const ahora = new Date();
-
+    console.log("Filter:", filter);
+    console.log("Ahora:", ahora);
     try {
       const patient = await Patient.findById(req.params.id);
       if (!patient) {
@@ -234,11 +235,12 @@ router.get(
       let appointments = records.flatMap((r) => r.appointments);
 
       // Filtrado según filter=pasado|futuro
-      if (filter === "pasado") {
+      if (filter === "past") {
         appointments = appointments.filter((a) => new Date(a.date) < ahora);
-      } else if (filter === "futuro") {
+      } else if (filter === "future") {
         appointments = appointments.filter((a) => new Date(a.date) > ahora);
       }
+      console.log("Appointments después del filtro:", appointments);
       // si filter no es ni "pasado" ni "futuro", devolvemos todas
 
       return res.status(200).send({ ok: true, resultado: appointments });
