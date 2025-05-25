@@ -29,7 +29,7 @@ router.post("/login", async (req, res) => {
             .status(401)
             .send({ ok: false, resultado: "Usuario no encontrado" });
         }
-        idActual = validUser.id;
+        idActual = validUser._id;
       }
       if (usuario.rol == "physio") {
         const validUser = await Physio.findOne({ userID: usuario._id });
@@ -39,7 +39,7 @@ router.post("/login", async (req, res) => {
             .status(401)
             .send({ ok: false, resultado: "Usuario no encontrado" });
         }
-        idActual = validUser.id;
+        idActual = validUser._id;
       }
       console.log("idActual", idActual);
       res.status(200).send({
