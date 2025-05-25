@@ -406,7 +406,7 @@ router.get(
 //añadir appointment a un record
 router.post(
   "/appointments/:id",
-  protegerRuta(["admin", "physio"]),
+  protegerRuta(["admin", "physio", "patient"]),
   async (req, res) => {
     const { date, physio, diagnosis, treatment, observations, status } =
       req.body;
