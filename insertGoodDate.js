@@ -8,12 +8,36 @@ const bycrypt = require("bcryptjs");
 async function loadData() {
   try {
     // Clean existing collections
-    // await Patient.deleteMany({});
-    // await Physio.deleteMany({});
-    // await Record.deleteMany({});
-    // await User.deleteMany({});
+    await Patient.deleteMany({});
+    await Physio.deleteMany({});
+    await Record.deleteMany({});
+    await User.deleteMany({});
     await User.deleteMany({ login: "hectorPhysio" });
     await User.deleteMany({ login: "olexPhysio" });
+    const users2 = [
+      new User({
+        login: "hector2",
+        password: "1234",
+        rol: "admin",
+      }),
+      new User({
+        login: "hector3",
+        password: "1234",
+        rol: "physio",
+      }),
+      new User({
+        login: "hector4",
+        password: "1234",
+        rol: "patient",
+      }),
+    ];
+    for (let i = 0; i < users.length; i++) {
+      const hashedPassword = await bycrypt.hash(users2[i].password, 10);
+      users2[i].password = hashedPassword;
+    }
+
+    const savedUsers2 = await Promise.all(users2.map((user) => user.save()));
+    console.log("Added users:", savedUsers2);
     const users = [
       new User({
         login: "olexPhysio",
@@ -35,6 +59,15 @@ async function loadData() {
     console.log("Added users:", savedUsers);
     // Create some patients
     const patients = [
+      new Patient({
+        name: "hector4",
+        surname: "López",
+        birthDate: new Date("1985-06-15"),
+        address: "Calle Mayor 123, Alicante",
+        insuranceNumber: "123456789",
+        email: "hectorrodriguezplanelles@gmail.com",
+        userID: savedUsers2[2]._id,
+      }),
       new Patient({
         name: "Pedro",
         surname: "López",
@@ -78,6 +111,14 @@ async function loadData() {
     // Create several physios, at least one for each specialty
     const physios = [
       new Physio({
+        name: "hector3",
+        surname: "Martínez",
+        specialty: "Sports",
+        licenseNumber: "A1234567",
+        email: "hectorrodriguezplanelles@gmail.com",
+        userID: savedUsers2[1]._id,
+      }),
+      new Physio({
         name: "Olex",
         surname: "Martínez",
         specialty: "Sports",
@@ -115,7 +156,7 @@ async function loadData() {
           "Paciente con antecedentes de lesiones en rodilla y cadera.",
         appointments: [
           {
-            date: new Date("2024-02-10"),
+            date: new Date("2025-05-10"),
             physio: savedPhysios[0]._id, // Sports specialty physio
             diagnosis: "Distensión de ligamentos de la rodilla",
             treatment: "Rehabilitación con ejercicios de fortalecimiento",
@@ -123,7 +164,7 @@ async function loadData() {
               "Se recomienda evitar actividad intensa por 6 semanas",
           },
           {
-            date: new Date("2024-03-01"),
+            date: new Date("2025-05-01"),
             physio: savedPhysios[0]._id,
             diagnosis: "Mejoría notable, sin dolor agudo",
             treatment: "Continuar con ejercicios, añadir movilidad funcional",
@@ -136,7 +177,7 @@ async function loadData() {
         medicalRecord: "Paciente con problemas neuromusculares.",
         appointments: [
           {
-            date: new Date("2024-02-15"),
+            date: new Date("2025-05-15"),
             physio: savedPhysios[1]._id, // Neurological specialty physio
             diagnosis: "Debilidad muscular en miembros inferiores",
             treatment: "Terapia neuromuscular y estiramientos",
@@ -149,7 +190,7 @@ async function loadData() {
         medicalRecord: "Lesión de hombro recurrente, movilidad limitada.",
         appointments: [
           {
-            date: new Date("2024-01-25"),
+            date: new Date("2025-05-25"),
             physio: savedPhysios[2]._id, // Pediatric specialty physio
             diagnosis: "Tendinitis en el manguito rotador",
             treatment: "Ejercicios de movilidad y fortalecimiento",
@@ -162,7 +203,7 @@ async function loadData() {
         medicalRecord: "Paciente con problemas oncológicos.",
         appointments: [
           {
-            date: new Date("2024-01-15"),
+            date: new Date("2025-05-15"),
             physio: savedPhysios[2]._id, // Oncology specialty physio
             diagnosis: "Fatiga post-tratamiento oncológico",
             treatment: "Ejercicios suaves y terapia de relajación",
