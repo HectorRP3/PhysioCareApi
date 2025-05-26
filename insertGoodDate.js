@@ -31,7 +31,7 @@ async function loadData() {
         rol: "patient",
       }),
     ];
-    for (let i = 0; i < users.length; i++) {
+    for (let i = 0; i < users2.length; i++) {
       const hashedPassword = await bycrypt.hash(users2[i].password, 10);
       users2[i].password = hashedPassword;
     }
