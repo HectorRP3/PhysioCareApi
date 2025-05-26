@@ -52,7 +52,8 @@ let physioSchema = new mongoose.Schema({
       100,
       "La URL del avatar no puede tener menos de 100 caracteres",
     ],
-    default: "",
+    default:
+      "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==",
   },
 });
 
