@@ -32,6 +32,12 @@ router.get(
     let result;
     const { filter } = req.query;
     try {
+      let physio;
+      if (filter) {
+        physio = Physio.find({ $or: [{ name: filter }, { surname: filter }] });
+      } else {
+        physio = Physio.find();
+      }
       Physio.find({ $or: [{ name: filter }, { surname: filter }] })
         .then((result) => {
           res.status(200).send({ ok: true, resultado: result });
