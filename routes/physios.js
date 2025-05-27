@@ -62,7 +62,7 @@ router.get(
       // Ejecutamos la búsqueda con o sin filtro
       const results = await Physio.find(mongoQuery);
 
-      console.log(results);
+      console.log("Resultados WW" + results);
       // Devolvemos la respuesta
       res.status(200).json({ ok: true, resultado: results });
     } catch (err) {
