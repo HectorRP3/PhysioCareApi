@@ -34,8 +34,9 @@ router.get(
     try {
       let physio;
       if (filter) {
+        const regex = new RegExp(filter, "i");
         physio = await Physio.find({
-          $or: [{ name: { $regex: filter } }, { surname: { $regex: filter } }],
+          $or: [{ name: { $regex: regex } }, { surname: { $regex: regex } }],
         });
       } else {
         physio = await Physio.find();
