@@ -58,10 +58,11 @@ router.get(
           $or: [{ name: regex }, { surname: regex }],
         };
       }
-
+      console.log(mongoQuery);
       // Ejecutamos la búsqueda con o sin filtro
       const results = await Physio.find(mongoQuery);
 
+      console.log(results);
       // Devolvemos la respuesta
       res.status(200).json({ ok: true, resultado: results });
     } catch (err) {
