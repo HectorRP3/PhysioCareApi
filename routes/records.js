@@ -242,7 +242,9 @@ router.get(
       }
       console.log("Appointments después del filtro:", appointments);
       // si filter no es ni "pasado" ni "futuro", devolvemos todas
-
+      appointments = appointments.sort(
+        (a, b) => new Date(b.date) - new Date(a.date)
+      );
       return res.status(200).send({ ok: true, resultado: appointments });
     } catch (err) {
       console.error(err);
@@ -314,6 +316,10 @@ router.get(
         appointments = appointments.filter((a) => new Date(a.date) > ahora);
       }
       // si filter no es ni "pasado" ni "futuro", devolvemos todas las de este physio
+      //ordernar por fecha de mayor a menor
+      appointments = appointments.sort(
+        (a, b) => new Date(b.date) - new Date(a.date)
+      );
 
       return res.status(200).send({ ok: true, resultado: appointments });
     } catch (err) {
@@ -445,8 +451,15 @@ router.put(
   "/appointments/:id",
   protegerRuta(["admin", "physio"]),
   async (req, res) => {
-    const { date, physio, diagnosis, treatment, observations, status } =
-      req.body;
+    const {
+      date,
+      physio,
+      diagnosis,
+      treatment,
+      observations,
+      status,
+      patient,
+    } = req.body;
     const newAppointment = {
       date,
       physio,
@@ -454,6 +467,7 @@ router.put(
       treatment,
       observations,
       status,
+      patient,
     };
     Record.updateMany(
       { "appointments._id": req.params.id },

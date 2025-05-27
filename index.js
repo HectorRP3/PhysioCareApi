@@ -13,6 +13,15 @@ const bycrypt = require("bcryptjs");
 const cors = require("cors");
 const path = require("path");
 let app = express();
+
+var admin = require("firebase-admin");
+
+var serviceAccount = require("firebase/serviceAccountKey.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+
 app.use(
   cors({
     origin: "*",
