@@ -34,22 +34,20 @@ router.get(
     try {
       let physio;
       if (filter) {
-        physio = Physio.find({ $or: [{ name: filter }, { surname: filter }] });
-      } else {
-        physio = Physio.find();
-      }
-      Physio.find({ $or: [{ name: filter }, { surname: filter }] })
-        .then((result) => {
-          res.status(200).send({ ok: true, resultado: result });
-        })
-        .catch((err) => {
-          if (res.length === 0) {
-            res.status(404).send({ ok: false, error: "Physio not found" });
-          } else {
-            res.status(500).send({ ok: false, error: "Internal server error" });
-          }
+        physio = await Physio.find({
+          $or: [{ name: filter }, { surname: filter }],
         });
-    } catch (err) {}
+      } else {
+        physio = await Physio.find();
+      }
+      res.status(200).send({ ok: true, resultado: physio });
+    } catch (err) {
+      if (res.length === 0) {
+        res.status(404).send({ ok: false, error: "Physio not found" });
+      } else {
+        res.status(500).send({ ok: false, error: "Internal server error" });
+      }
+    }
   }
 );
 
