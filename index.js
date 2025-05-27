@@ -14,9 +14,9 @@ const cors = require("cors");
 const path = require("path");
 let app = express();
 
-var admin = require("firebase-admin");
+// var admin = require("firebase-admin");
 
-var serviceAccount = require("/firebase/firebase/ionic-physiocare-firebase-adminsdk-fbsvc-b9ad036b02.json");
+// var serviceAccount = require("/firebase/firebase/ionic-physiocare-firebase-adminsdk-fbsvc-b9ad036b02.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
