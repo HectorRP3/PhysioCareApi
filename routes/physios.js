@@ -25,49 +25,25 @@ const Physio = require(__dirname + "/../models/physio");
 // ▸ PUT    /:id            — Modifica un fisio existente.
 // ▸ DELETE /:id            — Elimina un fisio.
 // ------------------------------------------------------------
-// router.get(
-//   "/",
-//   protegerRuta(["admin", "physio", "patient"]),
-//   async (req, res) => {
-//     Physio.find()
-//       .then((result) => {
-//         res.status(200).send({ ok: true, resultado: result });
-//       })
-//       .catch((err) => {
-//         if (res.length === 0) {
-//           res.status(404).send({ ok: false, error: "Physio not found" });
-//         } else {
-//           res.status(500).send({ ok: false, error: "Internal server error" });
-//         }
-//       });
-//   }
-// );
 router.get(
   "/",
   protegerRuta(["admin", "physio", "patient"]),
   async (req, res) => {
+    let result;
+    const { filter } = req.query;
     try {
-      // Extraemos el parámetro "filter" de la query string
-      const { filter } = req.query;
-
-      // Montamos la query: si viene filter, usamos una expresión regular insensible a mayúsculas
-      let mongoQuery = {};
-      if (filter) {
-        const regex = new RegExp(filter, "i"); // 'i' = case-insensitive
-        mongoQuery = {
-          $or: [{ name: regex }, { surname: regex }],
-        };
-      }
-      console.log(mongoQuery);
-      // Ejecutamos la búsqueda con o sin filtro
-      const results = await Physio.find(mongoQuery);
-
-      console.log("Resultados WW" + results);
-      // Devolvemos la respuesta
-      res.status(200).json({ ok: true, resultado: results });
-    } catch (err) {
-      console.error(err);
-    }
+      Physio.find({ $or: [{ name: filter }, { surname: filter }] })
+        .then((result) => {
+          res.status(200).send({ ok: true, resultado: result });
+        })
+        .catch((err) => {
+          if (res.length === 0) {
+            res.status(404).send({ ok: false, error: "Physio not found" });
+          } else {
+            res.status(500).send({ ok: false, error: "Internal server error" });
+          }
+        });
+    } catch (err) {}
   }
 );
 
