@@ -41,6 +41,11 @@ let patientSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "users",
   },
+  avatar: {
+    type: String,
+    default:
+      "https://olexanderg.net/img/logomiguel.jpg",
+  },
 });
 let Patient = mongoose.model("patient", patientSchema);
 module.exports = Patient;
