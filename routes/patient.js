@@ -109,6 +109,9 @@ router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
     insuranceNumber,
     email,
     password,
+    avatar, //nuevo
+    lat,
+    lng
   } = req.body;
   const newUser = new User({
     login: name,
@@ -126,6 +129,9 @@ router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
     insuranceNumber,
     email,
     userID: newUser._id, // Assign the user ID to the patient
+    avatar,
+    lat,
+    lng
   });
   newPatient
     .save()
