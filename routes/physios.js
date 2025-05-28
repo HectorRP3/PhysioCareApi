@@ -151,8 +151,16 @@ router.get(
 );
 
 router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
-  const { name, surname, specialty, licenseNumber, email, avatar, password } =
-    req.body;
+  const {
+    name,
+    surname,
+    specialty,
+    licenseNumber,
+    email,
+    avatar,
+    password,
+    starts,
+  } = req.body;
 
   let imageUrl = "";
   if (avatar) {
@@ -175,6 +183,7 @@ router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
     email,
     avatar: imageUrl,
     userID: newUser._id,
+    starts: starts || 1, // Default to 1 star if not provided
   });
   console.log("newPhysio", newPhysio);
   newPhysio
@@ -201,11 +210,13 @@ router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
 });
 
 router.put("/:id", protegerRuta(["admin", "physio"]), async (req, res) => {
-  const { name, surname, specialty, licenseNumber, email, avatar } = req.body;
+  const { name, surname, specialty, licenseNumber, email, avatar, starts } =
+    req.body;
   let imageUrl = "";
   if (avatar) {
     imageUrl = await saveImage("physios", avatar);
   }
+
   Physio.findByIdAndUpdate(
     req.params.id,
     {
@@ -215,6 +226,7 @@ router.put("/:id", protegerRuta(["admin", "physio"]), async (req, res) => {
       licenseNumber,
       email,
       avatar: imageUrl,
+      starts: starts || 1, // Default to 1 star if not provided
     },
     { new: true }
   )
