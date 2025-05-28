@@ -66,6 +66,30 @@ router.get("/find", protegerRuta(["admin", "physio"]), async (req, res) => {
   }
 });
 
+router.get("/me", protegerRuta(["patient"]), async (req, res) => {
+  // Obtener el token del header de la petición
+  const token = req.headers["authorization"].split(" ")[1];
+  // Decodificar el token para obtener el id del usuario
+  const decodedToken = validarToken(token);
+  // Obtener el id del usuario
+  const userId = decodedToken.id;
+  // Buscar el patient por el id del usuario
+  Patient.findOne({ _id: userId })
+    .then((result) => {
+      if (!result) {
+        res.status(404).send({
+          ok: false,
+          error: "No existe patient con id " + req.params.id,
+        });
+      } else {
+        res.status(200).send({ ok: true, resultado: result });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({ ok: false, error: "Internal server error" });
+    });
+});
+
 router.get(
   "/:id",
   protegerRuta(["admin", "physio", "patient"]),
