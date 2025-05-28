@@ -2,6 +2,7 @@ const express = require("express");
 const { protegerRuta, validarToken } = require("../auth/auth");
 let router = express.Router();
 const User = require(__dirname + "/../models/users");
+const bycrypt = require("bcryptjs");
 
 const {
   saveImage,
