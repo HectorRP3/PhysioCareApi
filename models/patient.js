@@ -46,6 +46,14 @@ let patientSchema = new mongoose.Schema({
     default:
       "https://olexanderg.net/img/logomiguel.jpg",
   },
+  lat: {
+    type: Number,
+    default: 0,
+  },
+  lng: {
+    type: Number,
+    default: 0,
+  },
 });
 let Patient = mongoose.model("patient", patientSchema);
 module.exports = Patient;
