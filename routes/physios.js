@@ -216,6 +216,8 @@ router.put("/:id", protegerRuta(["admin", "physio"]), async (req, res) => {
   // checkear que es una imagen
   if (avatar && !avatar.startsWith("https://")) {
     imageUrl = await saveImage("physios", avatar);
+  } else {
+    imageUrl = avatar; // Use the existing URL if it's already a valid URL
   }
 
   Physio.findByIdAndUpdate(
