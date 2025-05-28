@@ -213,7 +213,8 @@ router.put("/:id", protegerRuta(["admin", "physio"]), async (req, res) => {
   const { name, surname, specialty, licenseNumber, email, avatar, starts } =
     req.body;
   let imageUrl = "";
-  if (avatar) {
+  // checkear que es una imagen
+  if (avatar && !avatar.startsWith("https://")) {
     imageUrl = await saveImage("physios", avatar);
   }
 
