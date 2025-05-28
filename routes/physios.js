@@ -3,6 +3,7 @@ const { protegerRuta, validarToken } = require("../auth/auth");
 let router = express.Router();
 const User = require(__dirname + "/../models/users");
 const bycrypt = require("bcryptjs");
+const Record = require(__dirname + "/../models/record");
 
 const {
   saveImage,
@@ -243,6 +244,20 @@ router.put("/:id", protegerRuta(["admin", "physio"]), async (req, res) => {
 });
 
 router.delete("/:id", protegerRuta(["admin"]), async (req, res) => {
+  // Record.find().then((records) => {
+  //   let appointements = records.appointements.flatMaop((record) => {
+  //     return record.appointments;
+  //   });
+  //   let physioAppointments = appointements.filter(
+  //     (appointment) => appointment.physio.toString() === req.params.id
+  //   );
+
+  // });
+  const result = await Record.updateMany(
+    { "appointments.physio": req.params.id },
+    { $pull: { appointments: { physio: req.params.id } } }
+  );
+  console.log(result);
   Physio.findByIdAndDelete(req.params.id)
     .then((result) => {
       res.status(200).send({ ok: true, resultado: result });
