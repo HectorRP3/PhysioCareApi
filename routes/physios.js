@@ -89,7 +89,7 @@ router.get("/me", protegerRuta(["physio"]), async (req, res) => {
   // Obtener el id del usuario
   const userId = decodedToken.id;
   // Buscar el fisio por el id del usuario
-  Physio.findOne({ userID: userId })
+  Physio.findOne({ _id: userId })
     .then((result) => {
       if (!result) {
         res.status(404).send({
