@@ -469,7 +469,6 @@ router.post(
           }
           if (userPatient !== null) {
             console.log("Enviando notificación al paciente:", userPatient);
-            sss;
             if (userPatient.firebaseToken) {
               // Enviar notificación al paciente
               await sendMessage(
