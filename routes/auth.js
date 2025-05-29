@@ -46,7 +46,6 @@ router.post("/login", async (req, res) => {
         { firebaseToken: firebaseToken },
         { new: true }
       );
-      userActual.save();
       console.log("idActual", idActual);
       res.status(200).send({
         ok: true,
