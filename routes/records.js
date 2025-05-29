@@ -5,7 +5,7 @@ let router = express.Router();
 const Record = require(__dirname + "/../models/record");
 const Patient = require(__dirname + "/../models/patient");
 const Physio = require(__dirname + "/../models/physio");
-const { sendNotification } = require("../firebase/firebase.service");
+const { sendMessage } = require("../firebase/firebase.service");
 // ------------------------------------------------------------
 // recordRoutes.js
 // ------------------------------------------------------------
@@ -443,9 +443,12 @@ router.post(
         const userPhysio = await User.findById(physio.userID);
         const patient = await Patient.findById(newAppointment.patient);
         const userPatient = await User.findById(patient.userID);
+        console.log("User Physio:", userPhysio);
+        console.log("User Patient:", userPatient);
+
         // Enviar notificación al fisio
         if (userPhysio.firebaseToken) {
-          await sendNotification(
+          await sendMessage(
             userPhysio.firebaseToken,
             "Nueva cita",
             `Tienes una nueva cita el ${newAppointment.date.toLocaleString()}`,
@@ -455,7 +458,7 @@ router.post(
 
         // Enviar notificación al paciente
         if (userPatient.firebaseToken) {
-          await sendNotification(
+          await sendMessage(
             userPatient.firebaseToken,
             "Nueva cita",
             `Tu cita con el fisio ${
