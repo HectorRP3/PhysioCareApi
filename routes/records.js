@@ -445,7 +445,7 @@ router.post(
         const userPatient = await User.findById(patient.userID);
         // Enviar notificación al fisio
         if (userPhysio.firebaseToken) {
-          await firebaseService.sendNotification(
+          await sendNotification(
             userPhysio.firebaseToken,
             "Nueva cita",
             `Tienes una nueva cita el ${newAppointment.date.toLocaleString()}`,
