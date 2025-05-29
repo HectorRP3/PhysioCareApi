@@ -7,7 +7,7 @@ const User = require(__dirname + "/../models/users");
 const Auth = require(__dirname + "/../auth/auth");
 // Ruta para manejar el inicio de sesión
 router.post("/login", async (req, res) => {
-  const { login } = req.body;
+  const { login, firebaseToken } = req.body;
 
   User.findOne({ login: login })
     .then(async (usuario) => {
@@ -41,6 +41,12 @@ router.post("/login", async (req, res) => {
         }
         idActual = validUser.id;
       }
+      const userActual = User.findOneAndUpdate(
+        { _id: usuario._id },
+        { firebaseToken: firebaseToken },
+        { new: true }
+      );
+      userActual.save();
       console.log("idActual", idActual);
       res.status(200).send({
         ok: true,

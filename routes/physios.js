@@ -209,54 +209,58 @@ router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
     });
 });
 
-router.put("/:id", protegerRuta(["admin", "physio"]), async (req, res) => {
-  const { name, surname, specialty, licenseNumber, email, avatar, starts } =
-    req.body;
-  let imageUrl = "";
-  // checkear que es una imagen
-  if (avatar && !avatar.startsWith("https://")) {
-    imageUrl = await saveImage("physios", avatar);
-  } else {
-    imageUrl = avatar; // Use the existing URL if it's already a valid URL
-  }
+router.put(
+  "/:id",
+  protegerRuta(["admin", "physio", "patient"]),
+  async (req, res) => {
+    const { name, surname, specialty, licenseNumber, email, avatar, starts } =
+      req.body;
+    let imageUrl = "";
+    // checkear que es una imagen
+    if (avatar && !avatar.startsWith("https://")) {
+      imageUrl = await saveImage("physios", avatar);
+    } else {
+      imageUrl = avatar; // Use the existing URL if it's already a valid URL
+    }
 
-  Physio.findByIdAndUpdate(
-    req.params.id,
-    {
-      name,
-      surname,
-      specialty,
-      licenseNumber,
-      email,
-      avatar: imageUrl,
-      starts: starts || 1, // Default to 1 star if not provided
-    },
-    { new: true }
-  )
-    .then((result) => {
-      res.status(200).send({ ok: true, resultado: result });
-    })
-    .catch((err) => {
-      // if (res.length === 0) {
-      //   res.status(404).send({ ok: false, error: "Physio not found" });
-      // } else {
-      //   res.status(500).send({ ok: false, error: "Internal server error" });
-      // }
-      if (err.code === 11000) {
-        res.status(400).send({
-          ok: false,
-          error: "El número de licencia ya existe",
-        });
-      } else if (err.name === "ValidationError") {
-        res.status(400).send({
-          ok: false,
-          error: err.message,
-        });
-      } else {
-        res.status(500).send({ ok: false, error: "Internal server error" });
-      }
-    });
-});
+    Physio.findByIdAndUpdate(
+      req.params.id,
+      {
+        name,
+        surname,
+        specialty,
+        licenseNumber,
+        email,
+        avatar: imageUrl,
+        starts: starts || 1, // Default to 1 star if not provided
+      },
+      { new: true }
+    )
+      .then((result) => {
+        res.status(200).send({ ok: true, resultado: result });
+      })
+      .catch((err) => {
+        // if (res.length === 0) {
+        //   res.status(404).send({ ok: false, error: "Physio not found" });
+        // } else {
+        //   res.status(500).send({ ok: false, error: "Internal server error" });
+        // }
+        if (err.code === 11000) {
+          res.status(400).send({
+            ok: false,
+            error: "El número de licencia ya existe",
+          });
+        } else if (err.name === "ValidationError") {
+          res.status(400).send({
+            ok: false,
+            error: err.message,
+          });
+        } else {
+          res.status(500).send({ ok: false, error: "Internal server error" });
+        }
+      });
+  }
+);
 
 router.delete("/:id", protegerRuta(["admin"]), async (req, res) => {
   // Record.find().then((records) => {

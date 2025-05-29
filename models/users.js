@@ -19,6 +19,10 @@ let userSchema = new mongoose.Schema({
     require: true,
     enum: ["admin", "physio", "patient"],
   },
+  firebaseToken: {
+    type: String,
+    default: "",
+  },
 });
 
 let User = mongoose.model("Users", userSchema);
