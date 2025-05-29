@@ -439,16 +439,26 @@ router.post(
       $push: { appointments: newAppointment },
     })
       .then(async (result) => {
-        const physio = await Physio.findById(newAppointment.physio.toString());
-        const userPhysio = await User.findById(physio.userID);
-        const patient = await Patient.findById(
-          newAppointment.patient.toString()
-        );
-        const userPatient = await User.findById(patient.userID);
-        console.log("User Physio:", userPhysio);
-        console.log("User Patient:", userPatient);
-        console.log(newAppointment.patient.toString());
-        console.log(newAppointment.physio);
+        try {
+          const physio = await Physio.findById(
+            newAppointment.physio.toString()
+          );
+          const userPhysio = await User.findById(physio.userID);
+          const patient = await Patient.findById(
+            newAppointment.patient.toString()
+          );
+          const userPatient = await User.findById(patient.userID);
+          console.log("User Physio:", userPhysio);
+          console.log("User Patient:", userPatient);
+          console.log(newAppointment.patient.toString());
+          console.log(newAppointment.physio);
+        } catch (error) {
+          console.error("Error al buscar usuario:", error);
+          return res.status(500).send({
+            ok: false,
+            error: "Error al buscar usuario asociado a la cita",
+          });
+        }
 
         // // Enviar notificación al fisio
         // if (userPhysio.firebaseToken) {
