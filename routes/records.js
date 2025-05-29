@@ -525,7 +525,54 @@ router.put(
       { "appointments._id": req.params.id },
       { $set: { "appointments.$": newAppointment } }
     )
-      .then((result) => {
+      .then(async (result) => {
+        try {
+          const physio = await Physio.findById(
+            newAppointment.physio.toString()
+          );
+          const userPhysio = await User.findById(physio.userID.toString());
+          const patient = await Patient.findById(
+            newAppointment.patient.toString()
+          );
+          const userPatient = await User.findById(patient.userID.toString());
+          console.log("User Physio:", userPhysio);
+          console.log("User Patient:", userPatient);
+          console.log(newAppointment.patient.toString());
+          console.log(newAppointment.physio);
+
+          if (userPhysio !== null) {
+            console.log("Enviando notificación al fisio:", userPhysio);
+            // Enviar notificación al fisio
+            if (userPhysio.firebaseToken) {
+              await sendMessage(
+                userPhysio.firebaseToken,
+                "Nueva cita",
+                `Tienes una nueva cita el ${newAppointment.date.toLocaleString()}`,
+                {}
+              );
+            }
+          }
+          if (userPatient !== null) {
+            console.log("Enviando notificación al paciente:", userPatient);
+            if (userPatient.firebaseToken) {
+              // Enviar notificación al paciente
+              await sendMessage(
+                userPatient.firebaseToken,
+                "Nueva cita",
+                `Tu cita con el fisio ${
+                  physio.name
+                } ha sido programada para el ${newAppointment.date.toLocaleString()}`,
+                {}
+              );
+            }
+          }
+        } catch (error) {
+          console.error("Error al enviar notificación:", error);
+          return res.status(500).send({
+            ok: false,
+            error: "Error al enviar notificación",
+          });
+        }
         res.status(200).send({ ok: true, resultado: result });
       })
       .catch((err) => {
