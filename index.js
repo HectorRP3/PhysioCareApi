@@ -14,13 +14,13 @@ const cors = require("cors");
 const path = require("path");
 let app = express();
 
-// var admin = require("firebase-admin");
+const admin = require("firebase-admin");
 
-// var serviceAccount = require("/firebase/firebase/ionic-physiocare-firebase-adminsdk-fbsvc-b9ad036b02.json");
-
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount),
-// });
+// var serviceAccount = require("/firebase/ionic-physiocare-firebase-adminsdk-fbsvc-b9ad036b02.json");
+const serviceAccount = require("./firebase/ionic-physiocare-firebase-adminsdk-fbsvc-b9ad036b02.json");
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
 
 app.use(
   cors({
