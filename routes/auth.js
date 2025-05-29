@@ -6,6 +6,7 @@ const Physio = require("../models/physio");
 const User = require(__dirname + "/../models/users");
 const Auth = require(__dirname + "/../auth/auth");
 // Ruta para manejar el inicio de sesión
+
 router.post("/login", async (req, res) => {
   const { login, firebaseToken } = req.body;
 
@@ -73,6 +74,42 @@ router.get("/validarToken", async (req, res) => {
     return res.status(401).send({ ok: false, resultado: "Token no valido" });
   }
   res.status(200).send({ ok: true, resultado: decoded });
+});
+
+router.get("/logout", async (req, res) => {
+  //quitar firebaseToken del usuario
+  const token = req.headers["authorization"];
+  if (!token) {
+    return res.status(401).send({ ok: false, resultado: "Token no valido" });
+  }
+  const tokenSinBearer = token.split(" ")[1];
+  const decoded = Auth.validarToken(tokenSinBearer);
+  if (!decoded) {
+    return res.status(401).send({ ok: false, resultado: "Token no valido" });
+  }
+  let userId;
+  let patient = await Patient.findOne({ userID: decoded.id });
+  if (!patient) {
+    return res
+      .status(401)
+      .send({ ok: false, resultado: "Usuario no encontrado" });
+  } else {
+    userId = patient.userID;
+  }
+  let physio = await Physio.findOne({ userID: decoded.id });
+  if (!physio) {
+    return res
+      .status(401)
+      .send({ ok: false, resultado: "Usuario no encontrado" });
+  } else {
+    userId = physio.userID;
+  }
+
+  const user = await User.findOneAndUpdate(
+    { _id: decoded.id },
+    { firebaseToken: "" },
+    { new: true }
+  );
 });
 
 module.exports = router;
