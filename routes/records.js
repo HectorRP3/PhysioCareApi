@@ -592,13 +592,15 @@ router.get(
 );
 
 router.put("/:id", protegerRuta(["admin", "physio"]), async (req, res) => {
-  const { date, patient, physio, treatment } = req.body;
-  Record.findByIdAndUpdate(req.params.id, {
-    date,
-    patient,
-    physio,
-    treatment,
-  })
+  const { id, patient, medicalRecord } = req.body;
+  Record.findByIdAndUpdate(
+    req.params.id,
+    {
+      patient,
+      medicalRecord,
+    },
+    { new: true }
+  )
     .then((result) => {
       res.status(200).send({ ok: true, resultado: result });
     })
