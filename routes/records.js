@@ -439,13 +439,15 @@ router.post(
       $push: { appointments: newAppointment },
     })
       .then(async (result) => {
-        // const physio = await Physio.findById(newAppointment.physio);
-        // const userPhysio = await User.findById(physio.userID);
-        // const patient = await Patient.findById(newAppointment.patient);
-        // const userPatient = await User.findById(patient.userID);
-        // console.log("User Physio:", userPhysio);
-        // console.log("User Patient:", userPatient);
-        console.log(newAppointment.patient);
+        const physio = await Physio.findById(newAppointment.physio.toString());
+        const userPhysio = await User.findById(physio.userID);
+        const patient = await Patient.findById(
+          newAppointment.patient.toString()
+        );
+        const userPatient = await User.findById(patient.userID);
+        console.log("User Physio:", userPhysio);
+        console.log("User Patient:", userPatient);
+        console.log(newAppointment.patient.toString());
         console.log(newAppointment.physio);
 
         // // Enviar notificación al fisio
