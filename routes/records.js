@@ -461,27 +461,34 @@ router.post(
             error: "Error al buscar usuario asociado a la cita",
           });
         }
+        try {
+          // Enviar notificación al fisio
+          if (userPhysio.firebaseToken) {
+            await sendMessage(
+              userPhysio.firebaseToken,
+              "Nueva cita",
+              `Tienes una nueva cita el ${newAppointment.date.toLocaleString()}`,
+              {}
+            );
+          }
 
-        // Enviar notificación al fisio
-        if (userPhysio.firebaseToken) {
-          await sendMessage(
-            userPhysio.firebaseToken,
-            "Nueva cita",
-            `Tienes una nueva cita el ${newAppointment.date.toLocaleString()}`,
-            {}
-          );
-        }
-
-        // Enviar notificación al paciente
-        if (userPatient.firebaseToken) {
-          await sendMessage(
-            userPatient.firebaseToken,
-            "Nueva cita",
-            `Tu cita con el fisio ${
-              physio.name
-            } ha sido programada para el ${newAppointment.date.toLocaleString()}`,
-            {}
-          );
+          // Enviar notificación al paciente
+          if (userPatient.firebaseToken) {
+            await sendMessage(
+              userPatient.firebaseToken,
+              "Nueva cita",
+              `Tu cita con el fisio ${
+                physio.name
+              } ha sido programada para el ${newAppointment.date.toLocaleString()}`,
+              {}
+            );
+          }
+        } catch (error) {
+          console.error("Error al enviar notificación:", error);
+          return res.status(500).send({
+            ok: false,
+            error: "Error al enviar notificación",
+          });
         }
 
         res.status(200).send({ ok: true, resultado: result });
