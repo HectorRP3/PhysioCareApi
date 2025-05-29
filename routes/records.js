@@ -445,6 +445,8 @@ router.post(
         // const userPatient = await User.findById(patient.userID);
         // console.log("User Physio:", userPhysio);
         // console.log("User Patient:", userPatient);
+        console.log(newAppointment.patient);
+        console.log(newAppointment.physio);
 
         // // Enviar notificación al fisio
         // if (userPhysio.firebaseToken) {
