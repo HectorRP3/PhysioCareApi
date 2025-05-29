@@ -161,7 +161,7 @@ router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
     lat,
     lng,
   } = req.body;
-  if (password) {
+  if (!password) {
     password = "1234";
   }
   const newUser = new User({
