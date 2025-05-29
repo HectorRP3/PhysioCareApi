@@ -462,7 +462,8 @@ router.post(
           });
         }
         try {
-          if (userPhysio) {
+          if (userPhysio !== null) {
+            console.log("Enviando notificación al fisio:", userPhysio);
             // Enviar notificación al fisio
             if (userPhysio.firebaseToken) {
               await sendMessage(
