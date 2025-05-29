@@ -1,6 +1,6 @@
 const admin = require("firebase-admin");
 
-export async function sendMessage(token, title, body, data) {
+async function sendMessage(token, title, body, data) {
   const message = {
     notification: {
       title,
@@ -17,3 +17,5 @@ export async function sendMessage(token, title, body, data) {
     return null;
   }
 }
+
+module.exports = { sendMessage };
