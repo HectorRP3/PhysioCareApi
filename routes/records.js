@@ -454,14 +454,7 @@ router.post(
           console.log("User Patient:", userPatient);
           console.log(newAppointment.patient.toString());
           console.log(newAppointment.physio);
-        } catch (error) {
-          console.error("Error al buscar usuario:", error);
-          return res.status(500).send({
-            ok: false,
-            error: "Error al buscar usuario asociado a la cita",
-          });
-        }
-        try {
+
           if (userPhysio !== null) {
             console.log("Enviando notificación al fisio:", userPhysio);
             // Enviar notificación al fisio
@@ -474,7 +467,9 @@ router.post(
               );
             }
           }
-          if (userPatient) {
+          if (userPatient !== null) {
+            console.log("Enviando notificación al paciente:", userPatient);
+            sss;
             if (userPatient.firebaseToken) {
               // Enviar notificación al paciente
               await sendMessage(
