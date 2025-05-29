@@ -43,8 +43,7 @@ let patientSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    default:
-      "https://olexanderg.net/img/logomiguel.jpg",
+    default: "https://hectorrp.com/api/img/physios/1748288535717.jpg",
   },
   lat: {
     type: Number,
