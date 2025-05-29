@@ -5,6 +5,7 @@ let router = express.Router();
 const Record = require(__dirname + "/../models/record");
 const Patient = require(__dirname + "/../models/patient");
 const Physio = require(__dirname + "/../models/physio");
+const firebaseService = require("../firebase/firebase.service");
 // ------------------------------------------------------------
 // recordRoutes.js
 // ------------------------------------------------------------
@@ -423,6 +424,7 @@ router.post(
         error: "No existe record con id " + req.params.id,
       });
     }
+
     const newAppointment = {
       date,
       physio,
@@ -436,7 +438,33 @@ router.post(
     Record.findByIdAndUpdate(req.params.id, {
       $push: { appointments: newAppointment },
     })
-      .then((result) => {
+      .then(async (result) => {
+        const physio = await Physio.findById(newAppointment.physio);
+        const userPhysio = await User.findById(physio.userID);
+        const patient = await Patient.findById(newAppointment.patient);
+        const userPatient = await User.findById(patient.userID);
+        // Enviar notificación al fisio
+        if (userPhysio.firebaseToken) {
+          await firebaseService.sendNotification(
+            userPhysio.firebaseToken,
+            "Nueva cita",
+            `Tienes una nueva cita el ${newAppointment.date.toLocaleString()}`,
+            {}
+          );
+        }
+
+        // Enviar notificación al paciente
+        if (userPatient.firebaseToken) {
+          await firebaseService.sendNotification(
+            userPatient.firebaseToken,
+            "Nueva cita",
+            `Tu cita con el fisio ${
+              physio.name
+            } ha sido programada para el ${newAppointment.date.toLocaleString()}`,
+            {}
+          );
+        }
+
         res.status(200).send({ ok: true, resultado: result });
       })
       .catch((err) => {
