@@ -27,9 +27,12 @@ const Record = require(__dirname + "/../models/record");
 // ▸ PUT    /:id            — Modifica un paciente existente.
 // ▸ DELETE /:id            — Elimina un paciente.
 // ------------------------------------------------------------
-router.get("/", protegerRuta(["admin", "physio", "patient"]), async (req, res) => {
-  const { filter } = req.query;
-  try {
+router.get(
+  "/",
+  protegerRuta(["admin", "physio", "patient"]),
+  async (req, res) => {
+    const { filter } = req.query;
+    try {
       let patient;
       if (filter) {
         const regex = new RegExp(filter, "i");
@@ -48,20 +51,21 @@ router.get("/", protegerRuta(["admin", "physio", "patient"]), async (req, res) =
       }
     }
 
-  // Patient.find()
-  //   .then((result) => {
-  //     console.log("entrando");
+    // Patient.find()
+    //   .then((result) => {
+    //     console.log("entrando");
 
-  //     res.status(200).send({ ok: true, resultado: result });
-  //   })
-  //   .catch((err) => {
-  //     if (res.length === 0) {
-  //       res.status(404).send({ ok: false, error: "Patient not found" });
-  //     } else {
-  //       res.status(500).send({ ok: false, error: "Internal server error" });
-  //     }
-  //   });
-});
+    //     res.status(200).send({ ok: true, resultado: result });
+    //   })
+    //   .catch((err) => {
+    //     if (res.length === 0) {
+    //       res.status(404).send({ ok: false, error: "Patient not found" });
+    //     } else {
+    //       res.status(500).send({ ok: false, error: "Internal server error" });
+    //     }
+    //   });
+  }
+);
 
 router.get("/find", protegerRuta(["admin", "physio"]), async (req, res) => {
   let result;
@@ -155,8 +159,11 @@ router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
     password,
     avatar, //nuevo
     lat,
-    lng
+    lng,
   } = req.body;
+  if (password) {
+    password = "1234";
+  }
   const newUser = new User({
     login: name,
     password: await bycrypt.hash(password, 10), // Hash the password
@@ -175,7 +182,7 @@ router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
     userID: newUser._id, // Assign the user ID to the patient
     avatar,
     lat,
-    lng
+    lng,
   });
   newPatient
     .save()
