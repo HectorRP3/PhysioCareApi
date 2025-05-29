@@ -445,11 +445,11 @@ router.post(
           const physio = await Physio.findById(
             newAppointment.physio.toString()
           );
-          const userPhysio = await User.findById(physio.userID);
+          const userPhysio = await User.findById(physio.userID.toString());
           const patient = await Patient.findById(
             newAppointment.patient.toString()
           );
-          const userPatient = await User.findById(patient.userID);
+          const userPatient = await User.findById(patient.userID.toString());
           console.log("User Physio:", userPhysio);
           console.log("User Patient:", userPatient);
           console.log(newAppointment.patient.toString());
