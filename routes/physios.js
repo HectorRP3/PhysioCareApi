@@ -161,19 +161,25 @@ router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
     password,
     starts,
   } = req.body;
+  let newUser;
   if (!password) {
-    password = "1234";
+    newUser = new User({
+      login: name,
+      password: await bycrypt.hash("1234", 10), // Hash the password
+      rol: "physio",
+    });
+  } else {
+    newUser = new User({
+      login: name,
+      password: await bycrypt.hash(password, 10), // Hash the password
+      rol: "physio",
+    });
   }
   let imageUrl = "";
   if (avatar) {
     imageUrl = await saveImage("physios", avatar);
   }
 
-  const newUser = new User({
-    login: name,
-    password: await bycrypt.hash(password, 10), // Hash the password
-    rol: "physio",
-  });
   newUser.save().then((result) => {
     console.log("Usuario creado:", result);
   });
