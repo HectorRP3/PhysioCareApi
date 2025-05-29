@@ -161,7 +161,9 @@ router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {
     password,
     starts,
   } = req.body;
-
+  if (!password) {
+    password = "1234";
+  }
   let imageUrl = "";
   if (avatar) {
     imageUrl = await saveImage("physios", avatar);
