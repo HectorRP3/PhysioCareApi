@@ -439,34 +439,34 @@ router.post(
       $push: { appointments: newAppointment },
     })
       .then(async (result) => {
-        const physio = await Physio.findById(newAppointment.physio);
-        const userPhysio = await User.findById(physio.userID);
-        const patient = await Patient.findById(newAppointment.patient);
-        const userPatient = await User.findById(patient.userID);
-        console.log("User Physio:", userPhysio);
-        console.log("User Patient:", userPatient);
+        // const physio = await Physio.findById(newAppointment.physio);
+        // const userPhysio = await User.findById(physio.userID);
+        // const patient = await Patient.findById(newAppointment.patient);
+        // const userPatient = await User.findById(patient.userID);
+        // console.log("User Physio:", userPhysio);
+        // console.log("User Patient:", userPatient);
 
-        // Enviar notificación al fisio
-        if (userPhysio.firebaseToken) {
-          await sendMessage(
-            userPhysio.firebaseToken,
-            "Nueva cita",
-            `Tienes una nueva cita el ${newAppointment.date.toLocaleString()}`,
-            {}
-          );
-        }
+        // // Enviar notificación al fisio
+        // if (userPhysio.firebaseToken) {
+        //   await sendMessage(
+        //     userPhysio.firebaseToken,
+        //     "Nueva cita",
+        //     `Tienes una nueva cita el ${newAppointment.date.toLocaleString()}`,
+        //     {}
+        //   );
+        // }
 
-        // Enviar notificación al paciente
-        if (userPatient.firebaseToken) {
-          await sendMessage(
-            userPatient.firebaseToken,
-            "Nueva cita",
-            `Tu cita con el fisio ${
-              physio.name
-            } ha sido programada para el ${newAppointment.date.toLocaleString()}`,
-            {}
-          );
-        }
+        // // Enviar notificación al paciente
+        // if (userPatient.firebaseToken) {
+        //   await sendMessage(
+        //     userPatient.firebaseToken,
+        //     "Nueva cita",
+        //     `Tu cita con el fisio ${
+        //       physio.name
+        //     } ha sido programada para el ${newAppointment.date.toLocaleString()}`,
+        //     {}
+        //   );
+        // }
 
         res.status(200).send({ ok: true, resultado: result });
       })
