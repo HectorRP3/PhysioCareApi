@@ -5,7 +5,7 @@ let router = express.Router();
 const Record = require(__dirname + "/../models/record");
 const Patient = require(__dirname + "/../models/patient");
 const Physio = require(__dirname + "/../models/physio");
-const firebaseService = require("../firebase/firebase.service");
+const { sendNotification } = require("../firebase/firebase.service");
 // ------------------------------------------------------------
 // recordRoutes.js
 // ------------------------------------------------------------
@@ -455,7 +455,7 @@ router.post(
 
         // Enviar notificación al paciente
         if (userPatient.firebaseToken) {
-          await firebaseService.sendNotification(
+          await sendNotification(
             userPatient.firebaseToken,
             "Nueva cita",
             `Tu cita con el fisio ${
