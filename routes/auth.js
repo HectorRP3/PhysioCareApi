@@ -79,20 +79,18 @@ router.get("/validarToken", async (req, res) => {
 router.get("/logout", async (req, res) => {
   //quitar firebaseToken del usuario
   const token = req.headers["authorization"];
-  if (!token) {
-    return res.status(401).send({ ok: false, resultado: "Token no valido" });
-  }
+
   const tokenSinBearer = token.split(" ")[1];
   const decoded = Auth.validarToken(tokenSinBearer);
   if (!decoded) {
-    return res.status(401).send({ ok: false, resultado: "Token no valido" });
+    return res.status(401).send({ ok: false, resultado: "Token no valido2" });
   }
   let userId;
   let patient = await Patient.findOne({ userID: decoded.id });
   if (!patient) {
     return res
       .status(401)
-      .send({ ok: false, resultado: "Usuario no encontrado" });
+      .send({ ok: false, resultado: "Usuario no encontrado3" });
   } else {
     userId = patient.userID;
   }
@@ -100,7 +98,7 @@ router.get("/logout", async (req, res) => {
   if (!physio) {
     return res
       .status(401)
-      .send({ ok: false, resultado: "Usuario no encontrado" });
+      .send({ ok: false, resultado: "Usuario no encontrado4" });
   } else {
     userId = physio.userID;
   }
