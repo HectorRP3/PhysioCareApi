@@ -5,6 +5,8 @@ let router = express.Router();
 const Record = require(__dirname + "/../models/record");
 const Patient = require(__dirname + "/../models/patient");
 const Physio = require(__dirname + "/../models/physio");
+const User = require(__dirname + "/../models/users");
+
 const { sendMessage } = require("../firebase/firebase.service");
 // ------------------------------------------------------------
 // recordRoutes.js
@@ -460,27 +462,27 @@ router.post(
           });
         }
 
-        // // Enviar notificación al fisio
-        // if (userPhysio.firebaseToken) {
-        //   await sendMessage(
-        //     userPhysio.firebaseToken,
-        //     "Nueva cita",
-        //     `Tienes una nueva cita el ${newAppointment.date.toLocaleString()}`,
-        //     {}
-        //   );
-        // }
+        // Enviar notificación al fisio
+        if (userPhysio.firebaseToken) {
+          await sendMessage(
+            userPhysio.firebaseToken,
+            "Nueva cita",
+            `Tienes una nueva cita el ${newAppointment.date.toLocaleString()}`,
+            {}
+          );
+        }
 
-        // // Enviar notificación al paciente
-        // if (userPatient.firebaseToken) {
-        //   await sendMessage(
-        //     userPatient.firebaseToken,
-        //     "Nueva cita",
-        //     `Tu cita con el fisio ${
-        //       physio.name
-        //     } ha sido programada para el ${newAppointment.date.toLocaleString()}`,
-        //     {}
-        //   );
-        // }
+        // Enviar notificación al paciente
+        if (userPatient.firebaseToken) {
+          await sendMessage(
+            userPatient.firebaseToken,
+            "Nueva cita",
+            `Tu cita con el fisio ${
+              physio.name
+            } ha sido programada para el ${newAppointment.date.toLocaleString()}`,
+            {}
+          );
+        }
 
         res.status(200).send({ ok: true, resultado: result });
       })
