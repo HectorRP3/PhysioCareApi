@@ -41,12 +41,12 @@ router.post("/login", async (req, res) => {
         }
         idActual = validUser.id;
       }
-      const userActual = User.findOneAndUpdate(
+      const userActual = await User.findOneAndUpdate(
         { _id: usuario._id },
         { firebaseToken: firebaseToken },
         { new: true }
       );
-      console.log("idActual", idActual);
+      console.log("idActual", userActual);
       res.status(200).send({
         ok: true,
         token: Auth.generarToken(usuario.login, usuario.rol, idActual),
