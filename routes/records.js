@@ -483,10 +483,6 @@ router.post(
           }
         } catch (error) {
           console.error("Error al enviar notificación:", error);
-          return res.status(500).send({
-            ok: false,
-            error: "Error al enviar notificación",
-          });
         }
 
         res.status(200).send({ ok: true, resultado: result });
@@ -568,10 +564,6 @@ router.put(
           }
         } catch (error) {
           console.error("Error al enviar notificación:", error);
-          return res.status(500).send({
-            ok: false,
-            error: "Error al enviar notificación",
-          });
         }
         res.status(200).send({ ok: true, resultado: result });
       })
