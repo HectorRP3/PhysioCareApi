@@ -14,14 +14,17 @@ let appointmentsSchema = new mongoose.Schema({
     trim: true,
     maxlength: 500,
     minlength: 10,
+    default: "Sin diagnóstico",
   },
   treatment: {
     type: String,
     trim: true,
+    default: "Sin tratamiento",
   },
   observations: {
     type: String,
     maxlength: 500,
+    default: "Sin observaciones",
   },
   status: {
     type: String,
